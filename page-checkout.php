@@ -220,32 +220,18 @@ $delivery_dates = se_get_delivery_dates();
         .hs-vat-tax-prompt .tax-claim { font-size: 12px; color: #666; display: flex; align-items: center; gap: 4px; }
         .hs-vat-tax-prompt .tax-claim::before { content: '✓'; color: #3DBD00; font-weight: bold; }
 
-        /* Custom checkboxes */
-        .hs-checkout-checkboxes { margin: 15px 0; }
-        .hs-checkout-checkboxes label { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #555; margin-bottom: 8px; cursor: pointer; }
-        .hs-checkout-checkboxes input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
-        .hs-checkout-checkboxes a { color: #ff5b00; text-decoration: underline; }
+
+        /* Terms checkbox styling (matching original) */
+        .terms-checkbox-and-links { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; font-size: 13px; color: #555; }
+        .terms-checkbox-and-links a { color: #ff5b00; text-decoration: underline; }
+        .terms-checkbox-and-links .checkbox { flex-shrink: 0; }
+        #custom_mailing_checkout_field { margin: 10px 0; }
+        #custom_mailing_checkout_field .checkbox label { font-size: 13px; color: #555; }
+        #custom_mailing_checkout_field .optional { color: #999; }
 
         /* Hide WC-generated #payment inner elements we replace visually */
         .woocommerce-checkout-payment .wc_payment_methods { display: none !important; }
         .woocommerce-checkout-payment .place-order { display: none !important; }
-
-        /* Orange place order button (matching original) */
-        .button--orange-gradient {
-            background: linear-gradient(180deg, #ff7a2e 0%, #ff5b00 100%) !important;
-            color: #fff !important;
-            border: none !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
-            padding: 16px 30px !important;
-            border-radius: 8px !important;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-        }
-        .button--orange-gradient:hover {
-            background: linear-gradient(180deg, #ff8f4e 0%, #ff6a1a 100%) !important;
-        }
 
         /* COD active state - orange radio */
         .hs-payment-methods li.active { border-color: #ff5b00 !important; background: #fff8f5; }
@@ -468,7 +454,7 @@ $delivery_dates = se_get_delivery_dates();
                             </ul>
 
                             <!-- COD prompt -->
-                            <div class="hs-cod-checkout-prompt" id="hs-cod-prompt">
+                            <div class="hs-cod-checkout-prompt" id="hs-cod-prompt" style="display:none;">
                                 <img decoding="async" class="cod-prompt-image" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg">
                                 <div class="cod-prompt-text">Zaključi nakup sedaj, <strong>plačaj po povzetju 🙂</strong></div>
                             </div>
@@ -531,19 +517,28 @@ $delivery_dates = se_get_delivery_dates();
                             <!-- Place Order Button -->
                             <div class="custom-cta-skin" style="--cta-bg:#ff5b00;--cta-text:#ffffff">
                                 <div class="woocommerce-checkout-review-order container container--xs bg--white">
-                                    <button type="submit" class="button alt button--l button--block button--orange button--rounded button--orange-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
+                                    <button type="submit" class="button alt button--l button--block button--green button--rounded button--green-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
                                 </div>
 
-                                <!-- Checkboxes -->
-                                <div class="hs-checkout-checkboxes">
-                                    <label>
-                                        <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1" />
-                                        Strinjam se s <a href="https://ortowp.noriks.com/splosni-pogoji-poslovanja/" target="_blank">splošnimi pogoji poslovanja</a> in <a href="https://ortowp.noriks.com/varnostna-politika/" target="_blank">varnostno politiko</a>.
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" name="marketing_consent" id="marketing_consent" value="1" />
-                                        Želim prejemati obvestila o akcijah in posebnih ponudbah.
-                                    </label>
+                                <!-- Terms & Marketing (matching original) -->
+                                <div class="agreed_terms_txt">
+                                    <span class="policy-agreement-obligation">S klikom na gumb <strong>Oddaj naročilo</strong> se strinjam z oddajo naročila z obveznostjo plačila.</span> <br>
+                                    <div class="terms-checkbox-and-links">
+                                        <label class="checkbox">
+                                            <input type="checkbox" class="input-checkbox" name="terms_accepted" id="terms_accepted" value="1">
+                                        </label>
+                                        Prebral sem in sprejemam <a href="https://ortowp.noriks.com/splosni-pogoji-poslovanja/" target="_blank">Splošne pogoje poslovanja</a> in <a href="https://ortowp.noriks.com/pravica-do-odstopa-od-nakupa/" target="_blank">Pravico do odstopa od nakupa</a>.
+                                    </div>
+                                </div>
+                                <div id="custom_mailing_checkout_field">
+                                    <p class="form-row email_opt_in" id="email_opt_in_field">
+                                        <span class="woocommerce-input-wrapper">
+                                            <label class="checkbox">
+                                                <input type="checkbox" name="marketing_consent" id="marketing_consent" value="1" class="input-checkbox" />
+                                                Da, med prvimi želim biti seznanjen z aktualnimi akcijami. <span class="optional">(izbirno)</span>
+                                            </label>
+                                        </span>
+                                    </p>
                                 </div>
 
                                 <!-- Warranty badge -->
@@ -557,9 +552,7 @@ $delivery_dates = se_get_delivery_dates();
                                     </div>
                                 </div>
 
-                                <div class="agreed_terms_txt">
-                                    <span class="policy-agreement-obligation">S klikom na gumb <strong>Oddaj naročilo</strong> se strinjam z oddajo naročila z obveznostjo plačila.</span>
-                                </div>
+
                             </div>
 
                         </form>
@@ -683,12 +676,12 @@ jQuery(function($) {
         if (method === 'cod') {
             // Set real WC payment method to COD
             $('input[name="payment_method"][value="cod"]').prop('checked', true);
-            $('#hs-cod-prompt').show();
+            $('#hs-cod-prompt').slideDown(200);
         } else {
             $(this).addClass('show-unavailable');
             // Keep COD as actual method (others not available)
             $('input[name="payment_method"][value="cod"]').prop('checked', true);
-            $('#hs-cod-prompt').hide();
+            $('#hs-cod-prompt').slideUp(200);
         }
     });
 
@@ -722,6 +715,9 @@ jQuery(function($) {
             $('#billing_city').val('Ljubljana');
         }
     });
+
+    // Show COD prompt on load (COD is default)
+    $('#hs-cod-prompt').show();
 
     // Scroll to top
     $(document).on('click', '#scroll-to-top', function(e) {
