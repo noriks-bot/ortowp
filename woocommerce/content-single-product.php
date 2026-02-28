@@ -1,22 +1,18 @@
 <?php
 /**
- * Single product template - pixel-perfect copy of original
- * Only modification: WooCommerce add-to-cart integration
+ * Pixel-perfect product page - verbatim copy of original HTML
+ * Only addition: hidden WooCommerce add-to-cart form
  */
 get_header();
-
 global $product;
-$product_id = (is_object($product) && method_exists($product, "get_id")) ? $product->get_id() : 0;
+$pid = (is_object($product) && method_exists($product, 'get_id')) ? $product->get_id() : 0;
 ?>
-
-<!-- WooCommerce Add to Cart Form (hidden) -->
-<form id="wc-add-to-cart-form" method="post" action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product ? $product->get_permalink() : '')); ?>" style="display:none;">
-    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+<!-- WooCommerce hidden add-to-cart form -->
+<form id="wc-add-to-cart-form" method="post" action="<?php echo esc_url($product ? $product->get_permalink() : ''); ?>" style="display:none !important;">
+    <input type="hidden" name="product_id" value="<?php echo $pid; ?>">
     <input type="hidden" name="variation_id" id="wc-variation-id" value="">
     <input type="hidden" name="quantity" id="wc-quantity" value="1">
-    <input type="hidden" name="attribute_pa_color" id="wc-attr-color" value="">
-    <input type="hidden" name="attribute_pa_size" id="wc-attr-size" value="">
-    <button type="submit" name="add-to-cart" value="<?php echo $product_id; ?>">Add</button>
+    <button type="submit" name="add-to-cart" value="<?php echo $pid; ?>">Add</button>
 </form>
 
 

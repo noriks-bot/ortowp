@@ -1,10 +1,3 @@
-<?php
-/**
- * Footer template - pixel-perfect copy of original
- */
-?>
-</main>
-
 <footer class="footer">
 	<div class="footer__content container">
 		<div class="footer__col">
@@ -1932,6 +1925,5 @@ function qty_mp_push(selected_qty){
             });
 }
         </script>
-    </body></html>
-<?php wp_footer(); ?>
-</html>
+    <?php wp_footer(); ?>
+</body></html>
