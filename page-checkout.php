@@ -229,6 +229,28 @@ $delivery_dates = se_get_delivery_dates();
         /* Hide WC-generated #payment inner elements we replace visually */
         .woocommerce-checkout-payment .wc_payment_methods { display: none !important; }
         .woocommerce-checkout-payment .place-order { display: none !important; }
+
+        /* Orange place order button (matching original) */
+        .button--orange-gradient {
+            background: linear-gradient(180deg, #ff7a2e 0%, #ff5b00 100%) !important;
+            color: #fff !important;
+            border: none !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            padding: 16px 30px !important;
+            border-radius: 8px !important;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        .button--orange-gradient:hover {
+            background: linear-gradient(180deg, #ff8f4e 0%, #ff6a1a 100%) !important;
+        }
+
+        /* COD active state - orange radio */
+        .hs-payment-methods li.active { border-color: #ff5b00 !important; background: #fff8f5; }
+        .hs-payment-methods li.active input[type="radio"] { accent-color: #ff5b00; }
+        .hs-payment-methods li input[type="radio"]:checked { accent-color: #ff5b00; }
     </style>
 </head>
 <body class="wp-singular page-template-default page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7">
@@ -509,7 +531,7 @@ $delivery_dates = se_get_delivery_dates();
                             <!-- Place Order Button -->
                             <div class="custom-cta-skin" style="--cta-bg:#ff5b00;--cta-text:#ffffff">
                                 <div class="woocommerce-checkout-review-order container container--xs bg--white">
-                                    <button type="submit" class="button alt button--l button--block button--green button--rounded button--green-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
+                                    <button type="submit" class="button alt button--l button--block button--orange button--rounded button--orange-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
                                 </div>
 
                                 <!-- Checkboxes -->
