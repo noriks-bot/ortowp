@@ -38,3 +38,8 @@ function ortostep_ajax_add_to_cart() {
 }
 add_action('wp_ajax_ortostep_add_to_cart', 'ortostep_ajax_add_to_cart');
 add_action('wp_ajax_nopriv_ortostep_add_to_cart', 'ortostep_ajax_add_to_cart');
+
+// Redirect to cart after add-to-cart
+add_filter('woocommerce_add_to_cart_redirect', function() {
+    return wc_get_cart_url();
+});
