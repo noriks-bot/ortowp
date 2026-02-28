@@ -105,6 +105,79 @@ $item_label = $cart_count === 1 ? '1 izdelek' : $cart_count . ' izdelkov';
 
                 <?php do_action( 'woocommerce_cart_contents' ); ?>
 
+
+                <!-- UPSELL SECTION -->
+                <?php
+                $upsell_id = 46; // STEPROLL
+                $upsell_product = wc_get_product( $upsell_id );
+                $upsell_in_cart = false;
+                if ( $upsell_product && $upsell_product->is_in_stock() ) :
+                    // Check if already in cart
+                    foreach ( WC()->cart->get_cart() as $ci ) {
+                        if ( $ci['product_id'] == $upsell_id ) { $upsell_in_cart = true; break; }
+                    }
+                    if ( ! $upsell_in_cart ) :
+                ?>
+                <div class="simple simple-upsells-wrapper simple-upsells-wrapper__alternative" data-productid="<?php echo $upsell_id; ?>">
+                    <div class="vigo-gift__tooltip" data-productid="<?php echo $upsell_id; ?>" id="upsell-add-btn" style="cursor:pointer;">
+                        <div class="flex flex--autosize flex--middle">
+                            <div class="flex__item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M18.061,12.354a1.5,1.5,0,0,0-2.122,0L13.5,14.793V6a1.5,1.5,0,0,0-3,0v8.793L8.061,12.354a1.5,1.5,0,0,0-2.122,2.121l3.586,3.586a3.5,3.5,0,0,0,4.95,0l3.586-3.586A1.5,1.5,0,0,0,18.061,12.354Z"/></svg></div>
+                            <div class="flex__item f--bold">&nbsp; Dodaj v košarico</div>
+                        </div>
+                    </div>
+                    <div class="simple-upsell simple-upsell__alternative" data-productid="<?php echo $upsell_id; ?>">
+                        <div class="simple-upsell-content">
+                            <div class="simple-upsell-content--top">
+                                <div class="vigo-cart__addbtn">
+                                    <div class="flex__item">
+                                        <label for="upsell_product_<?php echo $upsell_id; ?>"></label>
+                                        <input id="upsell_product_<?php echo $upsell_id; ?>" type="checkbox" class="checkbox-simple checkbox-simple--green val--bottom" />
+                                    </div>
+                                </div>
+                                <div class="product-upsell-title">
+                                    <div class="f--m f--bold"><?php echo esc_html( $upsell_product->get_name() ); ?></div>
+                                </div>
+                                <div class="wrapper_addbtn_price">
+                                    <div class="price-section">
+                                        <div class="flex flex--autosize flex--bottom flex--gaps-s">
+                                            <div class="flex__item f--bold upsell-price-container"><span class="woocommerce-Price-amount amount"><bdi><?php echo number_format( (float) $upsell_product->get_sale_price(), 2, ',', '' ); ?><span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></div>
+                                        </div>
+                                    </div>
+                                    <div class="cart-upsell-regular-price">
+                                        <span class="woocommerce-Price-amount amount"><bdi><?php echo number_format( (float) $upsell_product->get_regular_price(), 2, ',', '' ); ?><span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="simple-upsell-content--bottom">
+                                <div class="product-upsell-img">
+                                    <img decoding="async" src="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125.jpg" alt="<?php echo esc_attr( $upsell_product->get_name() ); ?>"/>
+                                </div>
+                                <div class="product_desc_multy product-upsell-desc">
+                                    <?php echo wp_kses_post( $upsell_product->get_short_description() ?: $upsell_product->get_description() ); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var upsellBtn = document.getElementById('upsell-add-btn');
+                    var upsellCheckbox = document.getElementById('upsell_product_<?php echo $upsell_id; ?>');
+                    function addUpsell() {
+                        window.location.href = '<?php echo esc_url( add_query_arg( "add-to-cart", $upsell_id, wc_get_cart_url() ) ); ?>';
+                    }
+                    if (upsellBtn) upsellBtn.addEventListener('click', addUpsell);
+                    if (upsellCheckbox) upsellCheckbox.addEventListener('change', function() {
+                        if (this.checked) addUpsell();
+                    });
+                });
+                </script>
+                <?php
+                    endif;
+                endif;
+                ?>
+                <!-- /UPSELL SECTION -->
+
             </div>
             <div class="col-md-4 col-xs-12 vigo-wc-cart__totals">
                 <div class="cart-collaterals">
