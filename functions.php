@@ -50,7 +50,7 @@ function ortostep_scripts() {
     // Pass WooCommerce data to JS
     if (function_exists('is_product') && is_product()) {
         global $product;
-        if ($product) {
+        if ($product && is_object($product) && method_exists($product, "get_id")) {
             wp_localize_script('ortostep-main', 'wcData', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'cartUrl' => wc_get_cart_url(),

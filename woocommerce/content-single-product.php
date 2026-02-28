@@ -6,7 +6,7 @@
 get_header();
 
 global $product;
-$product_id = $product ? $product->get_id() : 0;
+$product_id = (is_object($product) && method_exists($product, "get_id")) ? $product->get_id() : 0;
 ?>
 
 <!-- WooCommerce Add to Cart Form (hidden) -->
