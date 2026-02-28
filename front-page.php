@@ -4499,7 +4499,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     var checkoutType = "checkout-form";
-    var shopLink = "https://si.stepease.eu/kosarica/?add-more=980183";
+    var shopLink = "https://ortowp.noriks.com/?add-to-cart=19&variation_id=24&attribute_pa_barva=oranzna&attribute_pa_velikost=43-44&quantity=1";
     var globalQuantityValue = 1;
 
         (function () {
@@ -8382,4 +8382,5 @@ function qty_mp_push(selected_qty){
 }
         </script>
     <script src="<?php echo get_template_directory_uri(); ?>/wc-atc-fix.js?v=1.0"></script>
+<script src="/wp-content/themes/ortostep/homepage-atc-fix.js?v=1.0"></script>
 </body></html>
