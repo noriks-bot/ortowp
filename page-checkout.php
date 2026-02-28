@@ -8,10 +8,11 @@ function se_checkout_enqueue_page_styles() {
     $css_dir = get_template_directory_uri() . '/assets/css/';
     $css_files = array(
         'select2', 'brands', 'hsplus-child', 'app', 'swiper.min', 'stepease',
-        'agent-kc', 'checkout-order-review', 'checkout-timer', 'checkout-upsell',
-        'checkout-extra-triggers', 'cookie-consent',
-        'custom-checkout-general', 'custom-checkout-si',
-        'custom-payment-notice', 'email-checkbox-subscription',
+        'agent-kc', 'check-client', 'checkout-extra-triggers',
+        'checkout-order-review', 'checkout-timer', 'checkout-upsell',
+        'cookie-consent', 'custom-checkout-general', 'custom-checkout-si',
+        'custom-cta-settings', 'custom-payment-notice',
+        'email-checkbox-subscription',
         'header', 'hide-payments-test-product',
         'general-shop-elements', 'lazy-load',
         'order-received-popup', 'extra-shipping-method-buttons',
@@ -20,7 +21,7 @@ function se_checkout_enqueue_page_styles() {
         'terms-and-conditions-link',
         'sv-wc-payment-form', 'wc-braintree.min', 'video-in-product-gallery',
         'abandoned-cart-restore-addons', 'cart-item-restore',
-        'coupon-banner', 'custom-cta-settings',
+        'coupon-banner',
         'free-shipping-above-quantity', 'loader',
         'notice-test-product-only', 'relation-popup-upsell',
         'virtual-products', 'quantity-discount-price', 'hsplus-public'
