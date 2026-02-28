@@ -171,25 +171,25 @@ foreach ( $cart_items as $cart_item_key => $cart_item ) {
 
                 
 <div class="simple simple-upsells-wrapper simple-upsells-wrapper__alternative "
-     data-productid="981497">
+     data-productid="46">
 
-    <div class="vigo-gift__tooltip" data-productid="981497">
+    <div class="vigo-gift__tooltip" data-productid="46">
         <div class="flex flex--autosize flex--middle">
             <div class="flex__item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.061,12.354a1.5,1.5,0,0,0-2.122,0L13.5,14.793V6a1.5,1.5,0,0,0-3,0v8.793L8.061,12.354a1.5,1.5,0,0,0-2.122,2.121l3.586,3.586a3.5,3.5,0,0,0,4.95,0l3.586-3.586A1.5,1.5,0,0,0,18.061,12.354Z"/></svg></div>
             <div class="flex__item f--bold">  Dodaj v košarico</div>
         </div>
     </div>
     <div class="simple-upsell simple-upsell__alternative "
-         data-productid="981497">
+         data-productid="46">
         <div class="simple-upsell-content">
             <div class="simple-upsell-content--top">
 
                 <div class="vigo-cart__addbtn">
                     <div class="flex__item">
-                        <label for="upsell_product_981497"
+                        <label for="upsell_product_46"
                                class=""></label>
-                        <input id="upsell_product_981497" type="checkbox"
-                               class="checkbox-simple checkbox-simple--green val--bottom"                                disabled/>
+                        <input id="upsell_product_46" type="checkbox"
+                               class="checkbox-simple checkbox-simple--green val--bottom" />
                     </div>
                 </div>
 
@@ -500,5 +500,44 @@ foreach ( $cart_items as $cart_item_key => $cart_item ) {
     </div>
 
 <?php wp_footer(); ?>
+<script>
+jQuery(function($) {
+    // Upsell add-to-cart
+    var $upsellWrapper = $('.simple-upsells-wrapper');
+    var $checkbox = $('#upsell_product_46');
+    var adding = false;
+
+    // Click anywhere on the upsell section to toggle
+    $upsellWrapper.on('click', function(e) {
+        if (adding) return;
+        if ($checkbox.is(':checked')) return; // already added
+        adding = true;
+        $checkbox.prop('checked', true);
+        $upsellWrapper.css('opacity', '0.5');
+
+        // Add STEPROLL (product 46) to cart via WC native URL
+        $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
+            action: 'ortostep_add_to_cart',
+            product_id: 46,
+            quantity: 1
+        }, function(resp) {
+            // Reload cart page to show updated totals
+            window.location.reload();
+        }).fail(function() {
+            // Fallback: direct add-to-cart URL
+            window.location.href = '<?php echo esc_url(home_url("/?add-to-cart=46")); ?>';
+        });
+    });
+
+    // If STEPROLL already in cart, check the checkbox
+    <?php
+    $in_cart = false;
+    foreach (WC()->cart->get_cart() as $item) {
+        if ($item['product_id'] == 46) { $in_cart = true; break; }
+    }
+    if ($in_cart) echo '$checkbox.prop("checked", true); $upsellWrapper.css("opacity","0.6");';
+    ?>
+});
+</script>
 </body>
 </html>

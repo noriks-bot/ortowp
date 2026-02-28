@@ -115,7 +115,6 @@ function se_get_delivery_dates() {
         $end->modify('+1 day');
         if ($end->format('N') < 6) $days_added2++;
     }
-    $months_sl = ['', 'jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'avg.', 'sep.', 'okt.', 'nov.', 'dec.'];
     $days_sl = ['', 'ponedeljek', 'torek', 'sreda', 'četrtek', 'petek', 'sobota', 'nedelja'];
     $d1 = $days_sl[(int)$start->format('N')] . ', ' . $start->format('j') . '.' . $start->format('n') . '.';
     $d2 = $days_sl[(int)$end->format('N')] . ', ' . $end->format('j') . '.' . $end->format('n') . '.';
@@ -136,107 +135,132 @@ $delivery_dates = se_get_delivery_dates();
     <title>Zaključek nakupa – Ortowp</title>
     <?php wp_head(); ?>
     <style>
+        /* === WC integration fixes only — visual styling from original CSS files === */
         img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }
         .woocommerce form .form-row .required { visibility: visible; }
-        .woocommerce-product-gallery { opacity: 1 !important; }
 
-        /* Hide WC defaults we replace with custom */
-        #shipping_method { display: none !important; }
-        .woocommerce-shipping-totals { display: none !important; }
-        .woocommerce-additional-fields { display: none !important; }
-        .woocommerce-checkout-review-order-table { display: none !important; }
-        .woocommerce-form-coupon-toggle, .checkout_coupon { display: none !important; }
-        .woocommerce-form-login-toggle, .woocommerce-form-login { display: none !important; }
-        .woocommerce-privacy-policy-text { display: none !important; }
-        .woocommerce-terms-and-conditions-wrapper { display: none !important; }
+        /* Hide WC elements we replace with custom visual equivalents */
+        #shipping_method,
+        .woocommerce-shipping-totals,
+        .woocommerce-additional-fields,
+        .woocommerce-checkout-review-order-table,
+        .woocommerce-form-coupon-toggle, .checkout_coupon,
+        .woocommerce-form-login-toggle, .woocommerce-form-login,
+        .woocommerce-checkout-payment .wc_payment_methods,
+        .woocommerce-checkout-payment .place-order .woocommerce-terms-and-conditions-wrapper,
+        .woocommerce-checkout-payment .place-order .woocommerce-privacy-policy-text,
+        .woocommerce-checkout-payment .place-order noscript { display: none !important; }
 
-        /* Phone helper text */
-        .phone-helper { font-size: 12px; color: #999; margin-top: 4px; }
+        /* WC #place_order button — ORANGE */
+        .woocommerce-checkout-payment .place-order { padding: 0 !important; margin: 0 !important; }
+        #place_order {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff5b00, #e04e00) !important;
+            color: #fff;
+            margin-top: 15px;
+        }
+        #place_order:hover { background: linear-gradient(135deg, #e04e00, #c94500) !important; }
 
-        /* Delivery type buttons */
+        /* Delivery toggle: home vs paketomat */
+        .home-delivery-fields { display: block; }
+        .home-delivery-fields.hidden { display: none; }
+        .paketomat-fields { display: none; }
+        .paketomat-fields.active { display: block; }
+        /* Hide ALL address fields when paketomat is active (including WC-regenerated ones) */
+        body.delivery-paketomat #home-delivery-fields,
+        body.delivery-paketomat .address-hint,
+        body.delivery-paketomat #billing_address_1_field,
+        body.delivery-paketomat #billing_address_2_field,
+        body.delivery-paketomat #billing_postcode_field,
+        body.delivery-paketomat #billing_city_field { display: none !important; }
+
+        /* Phone helper row */
+        .phone-helper-row { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-top: 4px; }
+
+        /* === Payment Methods (custom visual, not WC native) === */
+        .hs-payment-methods { list-style: none; padding: 0; margin: 0; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+        .hs-payment-methods li { padding: 14px 16px; border-bottom: 1px solid #e0e0e0; cursor: pointer; transition: background 0.15s; }
+        .hs-payment-methods li:last-child { border-bottom: none; }
+        .hs-payment-methods li.active { background: #fff8f5; }
+        .hs-payment-methods li label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; font-size: 14px; font-weight: 500; }
+        .hs-payment-methods li .payment-icons { margin-left: auto; display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+        .hs-payment-methods li .payment-icons img { height: 24px; width: auto; }
+        .hs-payment-methods li input[type="radio"] { accent-color: #ff5b00; width: 18px; height: 18px; flex-shrink: 0; }
+        .hs-payment-methods .payment-fee-free { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; }
+        .hs-payment-methods .payment-unavailable { font-size: 12px; color: #999; padding: 6px 0 0 28px; display: none; }
+        .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
+
+        /* === Delivery Type Buttons === */
+        .hs-delivery-type-container .container__title { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
         .hs-delivery-type-container .container__buttons { display: flex; gap: 10px; }
         .hs-delivery-type-container .delivery-type {
             flex: 1; border: 2px solid #e0e0e0; border-radius: 8px;
-            padding: 15px; text-align: center; cursor: pointer; transition: border-color 0.2s;
+            padding: 15px 10px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fff;
         }
-        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00; }
-        .hs-delivery-type-container .delivery-type img { max-width: 50px; margin: 0 auto; display: block; }
-        .hs-delivery-type-container .container__title { font-weight: bold; margin-bottom: 10px; }
+        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00; background: #fff8f5; }
+        .hs-delivery-type-container .delivery-type img { max-width: 50px; height: auto; margin: 0 auto 8px; display: block; }
+        .hs-delivery-type-container .delivery-type p { margin: 0; font-size: 13px; font-weight: 500; }
 
-        /* Paketomat */
-        .paketomat-fields { display: none; }
-        .paketomat-fields.active { display: block; }
-        .paketomat-fields select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-top: 8px; }
-        .paketomat-fields .paketomat-title { font-weight: bold; font-size: 14px; text-transform: uppercase; margin-bottom: 5px; }
-
-        /* Address hint */
-        .address-hint { font-size: 13px; color: #666; margin-bottom: 5px; }
-
-        /* Home delivery fields */
-        .home-delivery-fields { display: block; }
-        .home-delivery-fields.hidden { display: none; }
-
-        /* Shipping date box */
-        .shipping_method_custom .checkedlabel .outer-wrapper {
-            display: flex; align-items: center; justify-content: space-between; width: 100%;
-        }
-        .shipping_method_custom .hs-custom-date {
-            color: #ff5b00; font-size: 14px;
-        }
-        .shipping_method_custom li {
-            border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px;
-            list-style: none; background: #fff8f5;
-        }
-        .shipping_method_custom .checkedlabel {
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
-        .shipping_method_custom .checkedlabel svg { width: 18px; flex-shrink: 0; }
+        /* === Shipping date box === */
+        .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
+        .shipping_method_custom li { border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px; background: #fff8f5; }
+        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .shipping_method_custom .hs-custom-date { color: #333; font-size: 14px; }
         .shipping_method_custom .inner-wrapper-img { display: flex; align-items: center; gap: 8px; }
         .shipping_method_custom .tag--green { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .shipping_method_custom .delivery_img img { height: 20px; }
-        .shipping_method_custom { padding: 0; margin: 10px 0; }
+        .shipping_method_custom .delivery_img img { height: 22px; }
+        .shipping_method_custom .checkedlabel svg { width: 20px; height: 20px; flex-shrink: 0; fill: #ff5b00; }
 
-        /* Payment methods - custom visual */
-        .hs-payment-methods { list-style: none; padding: 0; margin: 0; }
-        .hs-payment-methods li {
-            border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 15px;
-            margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s;
-        }
-        .hs-payment-methods li.active { border-color: #3DBD00; background: #f8fff5; }
-        .hs-payment-methods li label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; }
-        .hs-payment-methods li .payment-icons { margin-left: auto; display: flex; gap: 5px; align-items: center; }
-        .hs-payment-methods li .payment-icons img { height: 22px; }
-        .hs-payment-methods .payment-fee-free { color: #3DBD00; font-weight: bold; font-size: 13px; margin-left: 5px; }
-        .hs-payment-methods .payment-unavailable { font-size: 12px; color: #999; padding: 8px 0 0 28px; display: none; }
-        .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
+        /* === Paketomat dropdown === */
+        .paketomat-fields select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-top: 5px; background: #fff; }
+        .paketomat-fields .paketomat-title { font-weight: bold; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .paketomat-provider-icons { display: flex; gap: 8px; margin-top: 8px; }
+        .paketomat-provider-icons img { height: 20px; }
 
-        /* COD prompt */
-        .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 10px; background: #f8f8f8; border-radius: 8px; padding: 12px 15px; margin: 15px 0; }
-        .hs-cod-checkout-prompt .cod-prompt-text { font-size: 14px; }
-        .hs-cod-checkout-prompt .cod-prompt-image { width: 40px; }
+        /* === COD prompt === */
+        .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 12px; padding: 12px 0; margin: 10px 0; border-top: 1px solid #eee; }
+        .hs-cod-checkout-prompt .cod-prompt-text { font-size: 14px; flex: 1; }
+        .hs-cod-checkout-prompt .cod-prompt-image { width: 40px; height: auto; }
 
-        /* VAT/customs */
-        .hs-vat-tax-prompt { display: flex; gap: 15px; justify-content: center; margin: 10px 0; }
-        .hs-vat-tax-prompt .tax-claim { font-size: 12px; color: #666; display: flex; align-items: center; gap: 4px; }
-        .hs-vat-tax-prompt .tax-claim::before { content: '✓'; color: #3DBD00; font-weight: bold; }
+        /* === VAT text === */
+        .hs-vat-tax-prompt { text-align: right; font-size: 12px; color: #666; margin: 8px 0 15px; line-height: 1.5; }
 
+        /* === Order summary === */
+        .checkout-order-summary h3 { font-size: 18px; font-weight: bold; margin: 20px 0 10px; }
+        .review-section-container { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .review-product-details { flex: 1; }
+        .review-product-details .f--m { font-size: 13px; }
+        .review-product-details .c--gray { color: #888; font-size: 12px; }
+        .info-price, .review-addons-price { font-weight: bold; white-space: nowrap; }
+        .review-total-row { display: flex; justify-content: space-between; padding: 12px 0 5px; font-size: 16px; }
+        .review-total-row strong { font-size: 18px; }
 
-        /* Terms checkbox styling (matching original) */
-        .terms-checkbox-and-links { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; font-size: 13px; color: #555; }
-        .terms-checkbox-and-links a { color: #ff5b00; text-decoration: underline; }
+        /* === Warranty badge === */
+        .checkout-warranty { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 15px 0; margin: 10px 0; }
+        .checkout-warranty__icon img { width: 55px; height: auto; }
+        .checkout-warranty__text { font-size: 13px; line-height: 1.4; }
+
+        /* === Terms & marketing === */
+        .agreed_terms_txt { font-size: 13px; color: #555; margin: 10px 0; line-height: 1.5; }
+        .agreed_terms_txt a { color: #ff5b00; text-decoration: underline; }
+        .terms-checkbox-and-links { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; }
         .terms-checkbox-and-links .checkbox { flex-shrink: 0; }
-        #custom_mailing_checkout_field { margin: 10px 0; }
-        #custom_mailing_checkout_field .checkbox label { font-size: 13px; color: #555; }
+        #custom_mailing_checkout_field { margin: 8px 0; }
+        #custom_mailing_checkout_field label { font-size: 13px; color: #555; display: flex; align-items: flex-start; gap: 8px; }
         #custom_mailing_checkout_field .optional { color: #999; }
 
-        /* Hide WC-generated #payment inner elements we replace visually */
-        .woocommerce-checkout-payment .wc_payment_methods { display: none !important; }
-        .woocommerce-checkout-payment .place-order { display: none !important; }
+        /* === Address hint === */
+        .address-hint { font-size: 13px; color: #666; margin-bottom: 5px; }
 
-        /* COD active state - orange radio */
-        .hs-payment-methods li.active { border-color: #ff5b00 !important; background: #fff8f5; }
-        .hs-payment-methods li.active input[type="radio"] { accent-color: #ff5b00; }
-        .hs-payment-methods li input[type="radio"]:checked { accent-color: #ff5b00; }
+        /* === Warehouse badge === */
+        .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; }
     </style>
 </head>
 <body class="wp-singular page-template-default page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7">
@@ -272,7 +296,7 @@ $delivery_dates = se_get_delivery_dates();
                                                 <label for="billing_phone" class="required_field">Telefon&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                 <span class="woocommerce-input-wrapper">
                                                     <input type="tel" class="input-text form-input" name="billing_phone" id="billing_phone" placeholder="Številka mobilnega telefona" value="" maxlength="16" aria-required="true" autocomplete="tel" />
-                                                    <span class="phone-helper">Primer: 031234567 · Za pomoč pri dostavi</span>
+                                                    <span class="phone-helper-row"><span>Primer: 031234567</span><span>Za pomoč pri dostavi</span></span>
                                                 </span>
                                             </p>
 
@@ -322,7 +346,7 @@ $delivery_dates = se_get_delivery_dates();
                                                 <p class="form-row form-row-wide form-group col-xs-12" id="paketomat_location_field">
                                                     <span class="woocommerce-input-wrapper">
                                                         <select name="paketomat_location" id="paketomat_location" class="form-input">
-                                                            <option value="">-- Izberi prevzemno točko --</option>
+                                                            <option value="">IZBERI PREVZEMNO TOČKO</option>
                                                             <optgroup label="DPD Paketomati">
                                                                 <option value="DPD Ljubljana Center">DPD Paketomat - Ljubljana Center</option>
                                                                 <option value="DPD Ljubljana BTC">DPD Paketomat - Ljubljana BTC</option>
@@ -344,6 +368,11 @@ $delivery_dates = se_get_delivery_dates();
                                                         </select>
                                                     </span>
                                                 </p>
+                                                <div class="paketomat-provider-icons">
+                                                    <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/parcel_machine_SL_alt.svg" alt="DPD Paketomat" style="height:20px;margin-right:8px;">
+                                                    <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/petrol.svg" alt="Petrol" style="height:20px;margin-right:8px;">
+                                                    <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/mol.svg" alt="MOL" style="height:20px;">
+                                                </div>
                                             </div>
 
                                             <!-- Home delivery address fields -->
@@ -422,7 +451,7 @@ $delivery_dates = se_get_delivery_dates();
                             <ul class="hs-payment-methods">
                                 <li class="active" data-method="cod">
                                     <label>
-                                        <input type="radio" name="payment_method" value="cod" checked class="input-radio" />
+                                        <input type="radio" name="payment_method_visual" value="cod" checked class="input-radio" />
                                         Plačilo po povzetju <span class="payment-fee-free">Brezplačno</span>
                                         <span class="payment-icons">
                                             <img src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg" alt="COD" />
@@ -432,7 +461,7 @@ $delivery_dates = se_get_delivery_dates();
                                 <li data-method="card">
                                     <label>
                                         <input type="radio" name="payment_method_visual" value="card" class="input-radio" />
-                                        Kreditna kartica
+                                        Kreditna kartica <span class="payment-fee-free">Brezplačno</span>
                                         <span class="payment-icons">
                                             <img src="https://images.vigo-shop.com/general/payment/visa.svg" alt="Visa" />
                                             <img src="https://images.vigo-shop.com/general/payment/mastercard_icon.svg" alt="Mastercard" />
@@ -444,7 +473,7 @@ $delivery_dates = se_get_delivery_dates();
                                 <li data-method="paypal">
                                     <label>
                                         <input type="radio" name="payment_method_visual" value="paypal" class="input-radio" />
-                                        PayPal
+                                        PayPal <span class="payment-fee-free">Brezplačno</span>
                                         <span class="payment-icons">
                                             <img src="https://images.vigo-shop.com/general/payment/paypal_icon.svg" alt="PayPal" />
                                         </span>
@@ -454,9 +483,9 @@ $delivery_dates = se_get_delivery_dates();
                             </ul>
 
                             <!-- COD prompt -->
-                            <div class="hs-cod-checkout-prompt" id="hs-cod-prompt" style="display:none;">
+                            <div class="hs-cod-checkout-prompt" id="hs-cod-prompt">
+                                <div class="cod-prompt-text">Zaključi nakup sedaj, <strong>plačaj po povzetju :)</strong></div>
                                 <img decoding="async" class="cod-prompt-image" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg">
-                                <div class="cod-prompt-text">Zaključi nakup sedaj, <strong>plačaj po povzetju 🙂</strong></div>
                             </div>
 
                             <!-- VAT/Customs text -->
@@ -498,8 +527,8 @@ $delivery_dates = se_get_delivery_dates();
                                         </div>
 <?php endforeach; ?>
                                         <div class="c--darkgray review-section-container review-addons shipping_order_review">
-                                            <div class="review-addons-title"><div>Standardna dostava</div></div>
-                                            <div class="review-addons-price review-sale-price">Brezplačno</div>
+                                            <div class="review-addons-title"><div>Dostava na prevzemno točko</div></div>
+                                            <div class="review-addons-price review-sale-price">0,00€</div>
                                             <div class="review-product-remove"></div>
                                         </div>
                                     </div>
@@ -514,13 +543,19 @@ $delivery_dates = se_get_delivery_dates();
                             <!-- WC hidden payment div (needed for nonce + AJAX) -->
                             <?php do_action('woocommerce_checkout_order_review'); ?>
 
-                            <!-- Place Order Button -->
-                            <div class="custom-cta-skin" style="--cta-bg:#ff5b00;--cta-text:#ffffff">
-                                <div class="woocommerce-checkout-review-order container container--xs bg--white">
-                                    <button type="submit" class="button alt button--l button--block button--green button--rounded button--green-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
+                            <!-- Warranty badge -->
+                            <div class="checkout-warranty flex flex--center flex--middle">
+                                <div class="flex__item--autosize checkout-warranty__icon">
+                                    <img decoding="async" src="https://images.vigo-shop.com/general/guarantee_money_back/satisfaction_icon_si.png">
                                 </div>
+                                <div class="flex__item--autosize f--m checkout-warranty__text">
+                                    <strong>Brezskrbno nakupujte</strong><br>
+                                    Možnost vračila denarja v roku 90 dni
+                                </div>
+                            </div>
 
-                                <!-- Terms & Marketing (matching original) -->
+                            <!-- Terms & Marketing -->
+                            <div class="custom-cta-skin" style="--cta-bg:#ff5b00;--cta-text:#ffffff">
                                 <div class="agreed_terms_txt">
                                     <span class="policy-agreement-obligation">S klikom na gumb <strong>Oddaj naročilo</strong> se strinjam z oddajo naročila z obveznostjo plačila.</span> <br>
                                     <div class="terms-checkbox-and-links">
@@ -540,19 +575,6 @@ $delivery_dates = se_get_delivery_dates();
                                         </span>
                                     </p>
                                 </div>
-
-                                <!-- Warranty badge -->
-                                <div class="checkout-warranty flex flex--center flex--middle">
-                                    <div class="flex__item--autosize checkout-warranty__icon">
-                                        <img decoding="async" src="https://images.vigo-shop.com/general/guarantee_money_back/satisfaction_icon_si.png">
-                                    </div>
-                                    <div class="flex__item--autosize f--m checkout-warranty__text">
-                                        <strong>Brezskrbno nakupujte </strong><br>
-                                        Možnost vračila denarja v roku 90 dni
-                                    </div>
-                                </div>
-
-
                             </div>
 
                         </form>
@@ -659,6 +681,8 @@ jQuery(function($) {
         $machineBtn.removeClass('active');
         $homeFields.removeClass('hidden');
         $pakFields.removeClass('active');
+        $('body').removeClass('delivery-paketomat');
+        $('.shipping_order_review .review-addons-title div').text('Standardna dostava');
     });
 
     $machineBtn.on('click', function() {
@@ -666,6 +690,8 @@ jQuery(function($) {
         $homeBtn.removeClass('active');
         $homeFields.addClass('hidden');
         $pakFields.addClass('active');
+        $('body').addClass('delivery-paketomat');
+        $('.shipping_order_review .review-addons-title div').text('Dostava na prevzemno točko');
     });
 
     // Payment method selection
@@ -674,36 +700,59 @@ jQuery(function($) {
         $(this).addClass('active');
         var method = $(this).data('method');
         if (method === 'cod') {
-            // Set real WC payment method to COD
             $('input[name="payment_method"][value="cod"]').prop('checked', true);
             $('#hs-cod-prompt').slideDown(200);
         } else {
             $(this).addClass('show-unavailable');
-            // Keep COD as actual method (others not available)
             $('input[name="payment_method"][value="cod"]').prop('checked', true);
             $('#hs-cod-prompt').slideUp(200);
         }
     });
 
-    // Custom place order button triggers the WC one
-    $('#place_order_custom').on('click', function(e) {
-        e.preventDefault();
-        // Validate terms checkbox
-        if (!$('#terms_accepted').is(':checked')) {
-            var errHtml = '<div class="woocommerce-error" role="alert"><ul><li>Prosimo, potrdite, da se strinjate s splo\u0161nimi pogoji poslovanja.</li></ul></div>';
-            $('.woocommerce-notices-wrapper').first().html(errHtml);
-            $('html, body').animate({ scrollTop: 0 }, 300);
-            return;
-        }
-        $('.woocommerce-notices-wrapper .woocommerce-error').remove();
-        // Click the real WC place_order button
-        var wcBtn = $('button#place_order');
-        if (wcBtn.length) {
-            wcBtn.trigger('click');
+    // Ensure WC checkout JS initialized properly
+    var wcCheckoutBound = false;
+    var checkAttempts = 0;
+    function checkWcCheckout() {
+        checkAttempts++;
+        var formEvents = $._data($('form.checkout')[0], 'events');
+        if (formEvents && formEvents.submit) {
+            wcCheckoutBound = true;
+            console.log('[ortowp] WC checkout JS bound OK');
+        } else if (checkAttempts < 20) {
+            setTimeout(checkWcCheckout, 250);
         } else {
-            $('form.checkout').trigger('submit');
+            console.warn('[ortowp] WC checkout JS not bound after 5s, adding fallback');
+            $('form.checkout').on('submit', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                if ($form.hasClass('processing')) return;
+                $form.addClass('processing');
+
+                $.ajax({
+                    type: 'POST',
+                    url: wc_checkout_params.checkout_url.replace('%%endpoint%%', 'checkout'),
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    success: function(result) {
+                        if (result.result === 'success') {
+                            window.location = result.redirect;
+                        } else {
+                            $form.removeClass('processing');
+                            if (result.messages) {
+                                $('.woocommerce-notices-wrapper').first().html(result.messages);
+                                $('html, body').animate({scrollTop: 0}, 300);
+                            }
+                        }
+                    },
+                    error: function() {
+                        $form.removeClass('processing');
+                        alert('Prišlo je do napake. Poskusite znova.');
+                    }
+                });
+            });
         }
-    });
+    }
+    setTimeout(checkWcCheckout, 500);
 
     // When paketomat selected, copy location to address
     $('#paketomat_location').on('change', function() {
