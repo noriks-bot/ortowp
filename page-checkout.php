@@ -5,23 +5,28 @@
  */
 
 
-function se_enqueue_page_styles() {
+function se_checkout_enqueue_page_styles() {
     $css_dir = get_template_directory_uri() . '/assets/css/';
     $css_files = array(
-        'brands', 'hsplus-child', 'app', 'swiper.min', 'stepease',
-        'agent-kc', 'checkout-extra-triggers', 'cookie-consent',
+        'select2', 'brands', 'hsplus-child', 'app', 'swiper.min', 'stepease',
+        'agent-kc', 'cart-dynamic-offer', 'cart-general', 'cart-upsell',
+        'checkout-extra-triggers', 'cookie-consent',
         'custom-payment-notice', 'header', 'hide-payments-test-product',
-        'homepage-shop-categories', 'general-shop-elements', 'lazy-load',
-        'product-page-courier-info', 'sv-wc-payment-form',
-        'video-in-product-gallery', 'abandoned-cart-restore-addons',
-        'coupon-banner', 'custom-cta-settings'
+        'general-shop-elements', 'lazy-load', 'lottery-ticket',
+        'product-page-courier-info', 'woo-fixes', 'sv-wc-payment-form',
+        'wc-braintree.min', 'video-in-product-gallery',
+        'abandoned-cart-restore-addons', 'cart-item-restore',
+        'coupon-banner', 'custom-cta-settings',
+        'free-shipping-above-quantity', 'loader',
+        'notice-test-product-only', 'relation-popup-upsell',
+        'virtual-products', 'quantity-discount-price', 'hsplus-public'
     );
     foreach ($css_files as $name) {
         wp_enqueue_style("se-{$name}", $css_dir . "{$name}.css", array(), '1.0');
     }
 }
 
-add_action('wp_enqueue_scripts', 'se_enqueue_page_styles', 20);
+add_action('wp_enqueue_scripts', 'se_checkout_enqueue_page_styles', 20);
 ?><!DOCTYPE html>
 <html lang="sl-SI">
 <head>
@@ -53,7 +58,7 @@ add_action('wp_enqueue_scripts', 'se_enqueue_page_styles', 20);
     }
 </style>
 </head>
-<body class="error404 wp-theme-hsplus wp-child-theme-hsplus-child  theme-vigoshop theme-hsplus woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7"  >
+<body class="wp-singular page-template page-template-template-fullwidth page-template-template-fullwidth-php page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7"  >
 
 
 
@@ -295,16 +300,10 @@ add_action('wp_enqueue_scripts', 'se_enqueue_page_styles', 20);
             </div>
 </div>
 
-<main class="main" role="main">
-  <div class="container container--l s-top--l s-bottom--l">
-    <h1 class="f--l f--bold">Blagajna</h1>
+<main id="content" class="main">
+        <div class="container container--l checkout-container">
     <?php echo do_shortcode('[woocommerce_checkout]'); ?>
   </div>
-</main>
-<!-- #main -->
-  </div><!-- #primary -->
-
-</div>
 </main>
 <div class="footer-wrap">
 
