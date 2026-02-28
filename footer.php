@@ -2,7 +2,7 @@
 	<div class="footer__content container">
 		<div class="footer__col">
 			<div class="footer__brand">
-				<a class="footer__brand-link" href="https://si.stepease.eu">
+				<a class="footer__brand-link" href="https://ortowp.noriks.com">
 					<!-- <img class="footer__brand-logo" src="https://images.hs-plus.com/assets/shared-images/ea33512470c1f_logo-stepease-orange-bg.svg" alt=""> -->
 					<img src="https://images.hs-plus.com/assets/shared-images/85789311ef02d_logo-stepease-orange-bg.svg">
 					<style>.footer__brand-link img {width: 8.125rem;}</style>
@@ -38,13 +38,13 @@
 		<div class="footer__col">
 			<div class="footer__info">
 				<h4 class="footer__title">Koristne informacije</h4>
-				<div class="footer__info-links"><a href="https://si.stepease.eu/splosni-pogoji-poslovanja/">Splo&#x161;ni pogoji poslovanja</a>
-<a href="https://si.stepease.eu/varnostna-politika/">Varnostna politika</a>
-<a href="https://si.stepease.eu/politika-uporabe-piskotkov/">Politika uporabe pi&#x161;kotkov</a>
-<a href="https://si.stepease.eu/pravica-do-odstopa-od-nakupa/">Pravica do odstopa od nakupa</a>
-<a href="https://si.stepease.eu/reklamacije-in-pritozbe/">Reklamacije in prito&#x17E;be</a>
-<a href="https://si.stepease.eu/menjava-v-garanciji/">Menjava v garanciji</a>
-<a href="https://si.stepease.eu/o-podjetju/">O podjetju</a>
+				<div class="footer__info-links"><a href="https://ortowp.noriks.com/splosni-pogoji-poslovanja/">Splo&#x161;ni pogoji poslovanja</a>
+<a href="https://ortowp.noriks.com/varnostna-politika/">Varnostna politika</a>
+<a href="https://ortowp.noriks.com/politika-uporabe-piskotkov/">Politika uporabe pi&#x161;kotkov</a>
+<a href="https://ortowp.noriks.com/pravica-do-odstopa-od-nakupa/">Pravica do odstopa od nakupa</a>
+<a href="https://ortowp.noriks.com/reklamacije-in-pritozbe/">Reklamacije in prito&#x17E;be</a>
+<a href="https://ortowp.noriks.com/menjava-v-garanciji/">Menjava v garanciji</a>
+<a href="https://ortowp.noriks.com/o-podjetju/">O podjetju</a>
 <!-- <a href="https://manuals.hs-plus.com/si?brand=stepease">Navodila za uporabo</a> --></div>
 			</div>
 		</div>

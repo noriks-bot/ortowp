@@ -1,47 +1,33 @@
 <?php
 /**
- * Template Name: StepEase Homepage
- * Pixel-perfect copy of si.stepease.eu homepage
+ * Template for Checkout page (page-checkout.php)
+ * Pixel-perfect header/footer from si.stepease.eu with WooCommerce checkout functionality
  */
 
-// Enqueue styles and scripts
-add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_style('se-brands', get_template_directory_uri() . '/assets/css/brands.css', array(), '1.0');
-    wp_enqueue_style('se-hsplus-child', get_template_directory_uri() . '/assets/css/hsplus-child.css', array(), '1.0');
-    wp_enqueue_style('se-app', get_template_directory_uri() . '/assets/css/app.css', array(), '1.0');
-    wp_enqueue_style('se-swiper', get_template_directory_uri() . '/assets/css/swiper.min.css', array(), '1.0');
-    wp_enqueue_style('se-stepease', get_template_directory_uri() . '/assets/css/stepease.css', array(), '1.0');
-    wp_enqueue_style('se-agent-kc', get_template_directory_uri() . '/assets/css/agent-kc.css', array(), '1.0');
-    wp_enqueue_style('se-checkout-extra-triggers', get_template_directory_uri() . '/assets/css/checkout-extra-triggers.css', array(), '1.0');
-    wp_enqueue_style('se-cookie-consent', get_template_directory_uri() . '/assets/css/cookie-consent.css', array(), '1.0');
-    wp_enqueue_style('se-custom-payment-notice', get_template_directory_uri() . '/assets/css/custom-payment-notice.css', array(), '1.0');
-    wp_enqueue_style('se-header', get_template_directory_uri() . '/assets/css/header.css', array(), '1.0');
-    wp_enqueue_style('se-hide-payments-test-product', get_template_directory_uri() . '/assets/css/hide-payments-test-product.css', array(), '1.0');
-    wp_enqueue_style('se-homepage-shop-categories', get_template_directory_uri() . '/assets/css/homepage-shop-categories.css', array(), '1.0');
-    wp_enqueue_style('se-general-shop-elements', get_template_directory_uri() . '/assets/css/general-shop-elements.css', array(), '1.0');
-    wp_enqueue_style('se-lazy-load', get_template_directory_uri() . '/assets/css/lazy-load.css', array(), '1.0');
-    wp_enqueue_style('se-product-page-courier-info', get_template_directory_uri() . '/assets/css/product-page-courier-info.css', array(), '1.0');
-    wp_enqueue_style('se-sv-wc-payment-form', get_template_directory_uri() . '/assets/css/sv-wc-payment-form.css', array(), '1.0');
-    wp_enqueue_style('se-video-in-product-gallery', get_template_directory_uri() . '/assets/css/video-in-product-gallery.css', array(), '1.0');
-    wp_enqueue_style('se-abandoned-cart-restore-addons', get_template_directory_uri() . '/assets/css/abandoned-cart-restore-addons.css', array(), '1.0');
-    wp_enqueue_style('se-coupon-banner', get_template_directory_uri() . '/assets/css/coupon-banner.css', array(), '1.0');
-    wp_enqueue_style('se-custom-cta-settings', get_template_directory_uri() . '/assets/css/custom-cta-settings.css', array(), '1.0');
-    wp_enqueue_script('se-swiper', get_template_directory_uri() . '/assets/js/swiper.min.js', array("jquery"), '1.0', true);
-    wp_enqueue_script('se-intersection-observer', get_template_directory_uri() . '/assets/js/intersection-observer.min.js', array(), '1.0', true);
-    wp_enqueue_script('se-lazyload', get_template_directory_uri() . '/assets/js/lazyload.min.js', array(), '1.0', true);
-    wp_enqueue_script('se-homepage-shop-categories', get_template_directory_uri() . '/assets/js/homepage-shop-categories.js', array("se-swiper"), '1.0', true);
-    wp_enqueue_script('se-general-shop-elements', get_template_directory_uri() . '/assets/js/general-shop-elements.js', array("se-swiper"), '1.0', true);
-    wp_enqueue_script('se-dynamic-product-price', get_template_directory_uri() . '/assets/js/dynamic-product-price.js', array("jquery"), '1.0', true);
-    wp_enqueue_script('se-uFuzzy', get_template_directory_uri() . '/assets/js/uFuzzy.iife.min.js', array(), '1.0', true);
-    wp_enqueue_script('se-app', get_template_directory_uri() . '/assets/js/app.js', array("jquery"), '1.0', true);
-}, 20);
 
+function se_enqueue_page_styles() {
+    $css_dir = get_template_directory_uri() . '/assets/css/';
+    $css_files = array(
+        'brands', 'hsplus-child', 'app', 'swiper.min', 'stepease',
+        'agent-kc', 'checkout-extra-triggers', 'cookie-consent',
+        'custom-payment-notice', 'header', 'hide-payments-test-product',
+        'homepage-shop-categories', 'general-shop-elements', 'lazy-load',
+        'product-page-courier-info', 'sv-wc-payment-form',
+        'video-in-product-gallery', 'abandoned-cart-restore-addons',
+        'coupon-banner', 'custom-cta-settings'
+    );
+    foreach ($css_files as $name) {
+        wp_enqueue_style("se-{$name}", $css_dir . "{$name}.css", array(), '1.0');
+    }
+}
+
+add_action('wp_enqueue_scripts', 'se_enqueue_page_styles', 20);
 ?><!DOCTYPE html>
 <html lang="sl-SI">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <title>Ortowp - Trgovina</title>
+    <title>Blagajna - Ortowp</title>
     <?php wp_head(); ?>
     <style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
 <style id='classic-theme-styles-inline-css' type='text/css'>
@@ -67,7 +53,7 @@ add_action('wp_enqueue_scripts', function() {
     }
 </style>
 </head>
-<body class="home archive post-type-archive post-type-archive-product wp-theme-hsplus wp-child-theme-hsplus-child  theme-vigoshop theme-hsplus woocommerce-shop woocommerce woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7"  >
+<body class="error404 wp-theme-hsplus wp-child-theme-hsplus-child  theme-vigoshop theme-hsplus woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7"  >
 
 
 
@@ -308,85 +294,17 @@ add_action('wp_enqueue_scripts', function() {
         </div>
             </div>
 </div>
-<main id="content" class="main">
-        <div class="container container--l checkout-container">
-<div id="primary" class="content-area"><main id="main" class="site-main" role="main"><header class="woocommerce-products-header">
-	
-	</header>
-<div class="woocommerce-notices-wrapper"></div>
-        <div class="hs-shop-by-product-categories">
-            <div class="hs-shop-homepage-title"> <h3>Nakupuj po kategorijah</h3></div>
-            <div class="hs-shop-by-product-categories__inner hs-shop-categories swiper hs-shop-categories-swiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <a class="category-box" href="https://ortowp.noriks.com">
-                            <div class="category-box__image">
-                                <img src="https://images.vigo-shop.com/general/new_offer.jpg">
-                                <div class="category__image-overlay"></div>
-                            </div>
-                            <div class="category-box__text">Najbolj prodajano</div>
-                        </a>
-                    </div>
-                                            </div>
-                <button type="button" class="hs-swiper-prev"><i class="fa fa-angle-left"></i></button>
-                <button type="button" class="hs-swiper-next"><i class="fa fa-angle-right"></i></button>
-            </div>
-        </div>
 
-        <p class="woocommerce-result-count" role="alert" aria-relevant="all" >
-	Showing all 6 results</p>
-<div class="vigo-wc-page-header flex flex--gaps flex--middle flex--wrap ">
-        <div class="flex__item vigo-wc-page-header__title">
-        <h1 class="vigo-wc-page-header__title">Trgovina</h1>
-        <p class="woocommerce-result-count" role="alert" aria-relevant="all" >
-	Showing all 6 results</p>
-    </div>
-    </div>
-<form class="woocommerce-ordering" method="get">
-		<select
-		name="orderby"
-		class="orderby"
-					aria-label="Vrstni red trgovine"
-			>
-					<option value="popularity" >Razvrsti po priljubljenosti</option>
-					<option value="date" >Razvrsti po najnovejšem</option>
-					<option value="price" >Razvrsti po ceni: cenejši najprej</option>
-					<option value="price-desc" >Razvrsti po ceni: dražji najprej</option>
-					<option value="total_sales"  selected='selected'>Total Sales</option>
-			</select>
-	<input type="hidden" name="paged" value="1" />
-	</form>
-<ul class="products columns-4 products--grid grid--gaps"><li class="product type-product post-980183 status-publish first instock product_cat-uncategorized product_tag-relation_cart_steproll product_tag-stepease has-post-thumbnail sale taxable shipping-taxable purchasable product-type-variable has-default-attributes">
-    <a href="https://ortowp.noriks.com/product/stepease/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Ortopedski vložki z masažnimi točkami | STEPEASE" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Ortopedski vložki z masažnimi točkami | STEPEASE</h2><input class="product_post_id" type="hidden" data-post_id="980183"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>18,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-<li class="product type-product post-981895 status-publish instock product_cat-uncategorized product_tag-relation_cart_stepheel has-post-thumbnail sale taxable shipping-taxable purchasable product-type-simple">
-    <a href="https://ortowp.noriks.com/product/blazinica-za-peto-za-zmanjsanje-bolecin-v-peti-stepheel-3/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/11/STEPHEEL-3831127625931-N-1__191125-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/11/STEPHEEL-3831127625931-N-1__191125-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPHEEL-3831127625931-N-1__191125-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/11/STEPHEEL-3831127625931-N-1__191125-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Blazinica za peto za zmanjšanje bolečin v peti | STEPHEEL" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPHEEL-3831127625931-N-1__191125-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Blazinica za peto za zmanjšanje bolečin v peti | STEPHEEL</h2><input class="product_post_id" type="hidden" data-post_id="981895"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>9,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-<li class="product type-product post-981896 status-publish instock product_cat-uncategorized product_tag-relation_cart_steproll has-post-thumbnail sale taxable shipping-taxable purchasable product-type-simple">
-    <a href="https://ortowp.noriks.com/product/masazni-valj-za-sprostitev-napetih-stopal-steproll/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Masažni valj za sprostitev napetih stopal | STEPROLL" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPROLL-3831127625707-N-1__191125-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Masažni valj za sprostitev napetih stopal | STEPROLL</h2><input class="product_post_id" type="hidden" data-post_id="981896"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>19,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-<li class="product type-product post-981634 status-publish last instock product_cat-uncategorized has-post-thumbnail sale taxable shipping-taxable purchasable product-type-variable has-default-attributes">
-    <a href="https://ortowp.noriks.com/product/blazinice-za-prste-steptip/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/11/STEPTIP-3831127625714-N-1__261125-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/11/STEPTIP-3831127625714-N-1__261125-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPTIP-3831127625714-N-1__261125-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/11/STEPTIP-3831127625714-N-1__261125-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Blazinice za prste | STEPTIP" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPTIP-3831127625714-N-1__261125-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Blazinice za prste | STEPTIP</h2><input class="product_post_id" type="hidden" data-post_id="981634"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>7,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-<li class="product type-product post-983185 status-publish first instock product_cat-new-angle product_tag-relation_cart_steproll product_tag-stepease has-post-thumbnail sale taxable shipping-taxable purchasable product-type-variable has-default-attributes">
-    <a href="https://ortowp.noriks.com/product/stepease/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Ortopedski vložki z masažnimi točkami | STEPEASE" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Ortopedski vložki z masažnimi točkami | STEPEASE</h2><input class="product_post_id" type="hidden" data-post_id="983185"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>14,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-<li class="product type-product post-981647 status-publish instock product_cat-uncategorized has-post-thumbnail sale taxable shipping-taxable purchasable product-type-variable has-default-attributes">
-    <a href="https://ortowp.noriks.com/product/kompresijske-nogavice-stepslick/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-	<span class="onsale">Akcija!</span>
-	<picture><source srcset="https://si.stepease.eu/app/uploads/2025/11/STEPSLICK-3831127625728-N-1__261125-400x400_extract.webp" data-srcset="https://si.stepease.eu/app/uploads/2025/11/STEPSLICK-3831127625728-N-1__261125-400x400.webp" type="image/webp" /><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPSLICK-3831127625728-N-1__261125-400x400_extract.jpg" data-src="https://si.stepease.eu/app/uploads/2025/11/STEPSLICK-3831127625728-N-1__261125-400x400.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img" alt="Kompresijske nogavice | STEPSLICK" width="400" height="400"/></picture><noscript><img data-ll="1" src="https://si.stepease.eu/app/uploads/2025/11/STEPSLICK-3831127625728-N-1__261125-400x400.jpg" width="400" height="400" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail lazy-img"></noscript><h2 class="woocommerce-loop-product__title f--m c--text">Kompresijske nogavice | STEPSLICK</h2><input class="product_post_id" type="hidden" data-post_id="981647"><div class="price price--no-sale"><ins><span class="woocommerce-Price-amount amount"><bdi>12,99<span class="woocommerce-Price-currencySymbol">&euro;</span></bdi></span></ins></div></a></li>
-</ul>
-<div class='counterLoadMore'>
-         <div>Prikazanih
-        <span class='productsShown'>5</span>
-      od 5 izdelkov
-        </div>
-      </div></main></div></div>
+<main class="main" role="main">
+  <div class="container container--l s-top--l s-bottom--l">
+    <h1 class="f--l f--bold">Blagajna</h1>
+    <?php echo do_shortcode('[woocommerce_checkout]'); ?>
+  </div>
+</main>
+<!-- #main -->
+  </div><!-- #primary -->
+
+</div>
 </main>
 <div class="footer-wrap">
 
@@ -435,10 +353,10 @@ add_action('wp_enqueue_scripts', function() {
                             <div class="footer-main__social-text flex__item mobile_contact mobile_viber_contact"><strong>Viber</strong></div>
                         </div>
                     </a>
-                                                                <!--                -->                                    <a href="/cdn-cgi/l/email-protection#94fdfaf2fbd4e7fdbae7e0f1e4f1f5e7f1baf1e1" class="footer-main__social-link button button--plain">
+                                                                <!--                -->                                    <a href="/cdn-cgi/l/email-protection#1871767e77586b71366b6c7d687d796b7d367d6d" class="footer-main__social-link button button--plain">
                         <div class="footer-main__social bg--secondary flex flex--middle flex--gaps">
                             <div class="footer-main__social-icon flex__item flex__item--autosize"><svg viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.92539 9.625L0.636328 3.17578C0.234766 2.86328 0 2.38281 0 1.875C0 0.839453 0.839453 0 1.875 0H18.125C19.1602 0 20 0.839453 20 1.875C20 2.38281 19.7305 2.86328 19.3652 3.17578L11.0762 9.625C10.4438 10.1172 9.55781 10.1172 8.92539 9.625ZM8.15781 10.609C8.70859 11.0382 9.3543 11.25 10 11.25C10.6445 11.25 11.293 11.0391 11.8438 10.6133L20 4.26562V13.125C20 14.1605 19.1605 15 18.125 15H1.875C0.839453 15 0 14.1602 0 13.125V4.26562L8.15781 10.609Z"/></svg></div>
-                            <div class="footer-main__social-text flex__item email-padding-top">Pošljite e-pošto na naslov: <span class="email-padding-top"><strong><span class="__cf_email__" data-cfemail="cba2a5ada48bb8a2e5b8bfaebbaeaab8aee5aebe">[email&#160;protected]</span></strong><span></div>
+                            <div class="footer-main__social-text flex__item email-padding-top">Pošljite e-pošto na naslov: <span class="email-padding-top"><strong><span class="__cf_email__" data-cfemail="c6afa8a0a986b5afe8b5b2a3b6a3a7b5a3e8a3b3">[email&#160;protected]</span></strong><span></div>
                         </div>
                     </a>
                 <!--                --><!--                    <a href="--><!--" class="footer-main__social-link footer-main__support button button--plain">-->
@@ -497,31 +415,6 @@ add_action('wp_enqueue_scripts', function() {
             </div>
         </div>
     </div>
-</div>
-
-<div class="cookie-consent-banner cookie-consent-banner--visible" role="region" aria-label="Cookie Consent Banner"
-     aria-live="polite">
-    <p class="cookie-consent-banner__message1">
-        Ta spletna stran uporablja piškotke, da vam zagotovi najboljšo možno izkušnjo. Z nadaljevanjem uporabe spletne strani soglašate z uporabo piškotkov, ki bodo nadgradili vašo nakupovalno izkušnjo.        <a href="/politika-uporabe-piskotkov/"
-           class="cookie-consent-banner__link"
-           target="_blank"
-           rel="noopener noreferrer">
-            Izvedite več o piškotkih        </a>
-        <br>
-        <span class="cookie-consent-banner__message1 cookie-consent-banner__message2">
-            Podatke uporabljamo v skladu z Googlovimi smernicami o uporabi podatkov.            <a href="https://business.safety.google/privacy/"
-               class="cookie-consent-banner__link"
-               target="_blank"
-               rel="noopener noreferrer">
-                Povezava            </a>
-        </span>
-    </p>
-    <button class="cookie-consent-banner__button cookie-consent-banner__button--accept"
-            aria-label="Sprejmi">
-        Sprejmi    </button>
-    <button class="cookie-consent-banner__button cookie-consent-banner__button--decline"
-            aria-label="Zavrni">
-        Zavrni    </button>
 </div>
 <div class="footer-payment bg--primary-dark c--white ">
     <div class="footer-payment__content container container--l">
@@ -636,7 +529,7 @@ add_action('wp_enqueue_scripts', function() {
             <div class="hs_loader">
                 <img src="https://images.vigo-shop.com/general/footer/stepease_footer_logo.svg">
             </div>
-        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>var DataLayerOutput = {"event":"pageLoaded","cartContent":{"totals":{"subtotal":0,"subtotal_tax":0,"shipping_total":0,"shipping_tax":0,"discount_total":0,"discount_tax":0,"cart_contents_total":0,"cart_contents_tax":0,"fee_total":0,"fee_tax":0,"total":0,"total_tax":0,"total_with_tax":0,"currency":"EUR","applied_coupons":[]},"quantity_sum":0,"productSKUs":[],"productSKU_IDs":[],"categories":[]},"PageType":"home","ecomm_pagetype":"home","postID":981647,"userLoggedIn":false,"ecommerce":{"currencyCode":"EUR"}}; window.dataLayer.push(DataLayerOutput)</script>  <script>
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>var DataLayerOutput = {"event":"pageLoaded","cartContent":{"totals":{"subtotal":0,"subtotal_tax":0,"shipping_total":0,"shipping_tax":0,"discount_total":0,"discount_tax":0,"cart_contents_total":0,"cart_contents_tax":0,"fee_total":0,"fee_tax":0,"total":0,"total_tax":0,"total_with_tax":0,"currency":"EUR","applied_coupons":[]},"quantity_sum":0,"productSKUs":[],"productSKU_IDs":[],"categories":[]},"PageType":"unknown","ecomm_pagetype":"unknown","postID":false,"userLoggedIn":false,"ecommerce":{"currencyCode":"EUR"}}; window.dataLayer.push(DataLayerOutput)</script>  <script>
     (function ($) {
       'use strict';
       $('.single_add_to_cart_button').on('click', function () {
@@ -649,7 +542,7 @@ add_action('wp_enqueue_scripts', function() {
 </script>
         <script>
             window.dataLayer.push({
-                'fb_userId_PageView': 'PageView_69a33f71448734.59553962',
+                'fb_userId_PageView': 'PageView_69a340bb4e9e31.56335197',
             })
         </script>
         <script>var additionalData = [];</script>	<script type='text/javascript'>
@@ -685,11 +578,11 @@ add_action('wp_enqueue_scripts', function() {
                     </a>
                                                                                 <!--                ALL-14367 Remove contact support icon-->
 <!--                -->                                <div class="border border--top border--light"></div>
-                <a class="flex__item t--no-decoration c--text s-all--s" href="/cdn-cgi/l/email-protection#ef86818980af9c86c19c9b8a9f8a8e9c8ac18a9a">
+                <a class="flex__item t--no-decoration c--text s-all--s" href="/cdn-cgi/l/email-protection#f59c9b939ab5869cdb8681908590948690db9080">
                     <div class="flex flex--autosize flex--gaps">
                         <div class="flex__item"><svg viewBox="0 0 20 15" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.92539 9.625L0.636328 3.17578C0.234766 2.86328 0 2.38281 0 1.875C0 0.839453 0.839453 0 1.875 0H18.125C19.1602 0 20 0.839453 20 1.875C20 2.38281 19.7305 2.86328 19.3652 3.17578L11.0762 9.625C10.4438 10.1172 9.55781 10.1172 8.92539 9.625ZM8.15781 10.609C8.70859 11.0382 9.3543 11.25 10 11.25C10.6445 11.25 11.293 11.0391 11.8438 10.6133L20 4.26562V13.125C20 14.1605 19.1605 15 18.125 15H1.875C0.839453 15 0 14.1602 0 13.125V4.26562L8.15781 10.609Z"/></svg></div>
                         <div
-                            class="flex__item"><strong><span class="__cf_email__" data-cfemail="0861666e67487b61267b7c6d786d697b6d266d7d">[email&#160;protected]</span></strong></div>
+                            class="flex__item"><strong><span class="__cf_email__" data-cfemail="7a13141c153a091354090e1f0a1f1b091f541f0f">[email&#160;protected]</span></strong></div>
                     </div>
                 </a>
             </div>
@@ -708,7 +601,7 @@ add_action('wp_enqueue_scripts', function() {
     </div>
         <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
             jQuery(document).ready(function ($) {
-                let hideDescription = false;
+                let hideDescription = null;
                 if (hideDescription) {
                     $(".woocommerce-variation-description").hide();
                     $(document).on("found_variation", "form.variations_form", function () {
@@ -717,7 +610,7 @@ add_action('wp_enqueue_scripts', function() {
                 }
             });
         </script>
-        <script type="application/ld+json">{"@context":"https:\/\/schema.org\/","@type":"WebSite","name":"Si.stepease.eu","url":"https:\/\/ortowp.noriks.com","potentialAction":{"@type":"SearchAction","target":"https:\/\/ortowp.noriks.com\/?s={search_term_string}&amp;post_type=product","query-input":"required name=search_term_string"}}</script><script type="text/javascript" src="https://si.stepease.eu/app/plugins/core/resources/dist/js/image-lazy-load/js/vendor/intersection-observer-0670097fc8.min.js" id="lazyload-intersection-js"></script>
+        <script type="text/javascript" src="https://si.stepease.eu/app/plugins/core/resources/dist/js/image-lazy-load/js/vendor/intersection-observer-0670097fc8.min.js" id="lazyload-intersection-js"></script>
 <script type="text/javascript" id="lazyload-js-before">
 /* <![CDATA[ */
         window.lazyLoadOptions = {
@@ -751,7 +644,7 @@ var hsp_helper_data = [{"cookie":"wp_hsplus_buffer_session","query":"wphsp_sessi
 /* <![CDATA[ */
 var vigoshop = {"siteUrl":"https:\/\/ortowp.noriks.com\/","productDuplicatedMessage":"Zaradi velikega povpra\u0161evanja zaloge hitro zmanjkuje!","adminUrl":"https:\/\/ortowp.noriks.com\/wp\/wp-admin\/admin-ajax.php"};
 var special_offer_code = {"shouldDisplayCode":""};
-var paginationSettings = {"loadMoreType":"infinite_scroll","loadQuantity":"16","initNumberOfProducts":"16","batchLoadQuantity":"3","isWPPage":"0","isHomePage":"1","isCategoryPage":"","showSpecificCategory":"uncategorized","totalProducts":"5"};
+var paginationSettings = {"loadMoreType":"infinite_scroll","loadQuantity":"16","initNumberOfProducts":"16","batchLoadQuantity":"3","isWPPage":"","isHomePage":"","isCategoryPage":"","showSpecificCategory":"","totalProducts":"6"};
 /* ]]> */
 </script>
 <script type="text/javascript" src="https://si.stepease.eu/app/themes/hsplus/dist/app-0df85dd4e7.js" id="app-js"></script>

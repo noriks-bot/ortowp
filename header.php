@@ -4,7 +4,7 @@
 <meta property="og:title" content="Ortopedski vlo&#x17E;ki z masa&#x17E;nimi to&#x10D;kami | STEPEASE">
 <meta property="og:description" content="Ortopedski vlo&#x17E;ki z masa&#x17E;nimi to&#x10D;kami
 ">
-<meta property="og:image" content="https://si.stepease.eu/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025.jpg">
+<meta property="og:image" content="https://ortowp.noriks.com/app/uploads/2025/10/STEPEASE-3831127616552-EN-9__171025.jpg">
 <script>window.noZensmooth = true</script>
 <link rel="shortcut icon" href="https://images.hs-plus.com/assets/shared-images/24326c2909d3e_favicon-stepease.svg" type="image/svg">
 <link href="https://images.hs-plus.com/assets/shared-images/24326c2909d3e_favicon-stepease.svg" rel="apple-touch-icon">
@@ -4226,14 +4226,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 				<input id="hamburger" class="header__hamburger-btn" type="checkbox">
 				<label for="hamburger" class="header__hamburger-icon"><span class="header__icon"></span></label>
 				<ul class="header__menu">
-					<li class="header__menu-item"><a class="header__menu-link link--nu" href="https://stepease.eu/si/stepease/t2/v1/home">Domov</a></li>
-					<li class="header__menu-item"><a class="header__menu-link link--nu active" href="https://stepease.eu/si/stepease/t1/v1/lp1">Vlo&#x17E;ki</a></li>
-					<li class="header__menu-item"><a class="header__menu-link link--nu" href="https://stepease.eu/si/collection/t1/v1/lp1">Vsi izdelki</a></li>
+					<li class="header__menu-item"><a class="header__menu-link link--nu" href="https://ortowp.noriks.com/">Domov</a></li>
+					<li class="header__menu-item"><a class="header__menu-link link--nu active" href="https://ortowp.noriks.com/trgovina/">Vlo&#x17E;ki</a></li>
+					<li class="header__menu-item"><a class="header__menu-link link--nu" href="https://ortowp.noriks.com/trgovina/">Vsi izdelki</a></li>
 				</ul>
-				<a class="header__logo" href="https://stepease.eu/si/stepease/t2/v1/home">
+				<a class="header__logo" href="https://ortowp.noriks.com/">
 					<img class="header__logo-img" src="https://images.hs-plus.com/assets/STEPPER%20test-0/62260f0233272_logo-stepease-orange-bg.svg" alt="logo">
 				</a>
-				<a class="header__cart" href="https://si.stepease.eu/kosarica/?add-more=">
+				<a class="header__cart" href="https://ortowp.noriks.com/kosarica/?add-more=">
 					<img class="header__cart-img" src="https://images.hs-plus.com/assets/STEPPER%20test-0/3ed463b233aa1_icon-cart.svg" alt="logo">
 				</a>
 			</div>

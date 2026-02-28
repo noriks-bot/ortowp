@@ -43,3 +43,10 @@ add_action('wp_ajax_nopriv_ortostep_add_to_cart', 'ortostep_ajax_add_to_cart');
 add_filter('woocommerce_add_to_cart_redirect', function() {
     return wc_get_cart_url();
 });
+
+// Enqueue WC add-to-cart fix
+add_action("wp_enqueue_scripts", function() {
+    if (is_product()) {
+        wp_enqueue_script("wc-atc-fix", get_template_directory_uri() . "/wc-atc-fix.js", array(), "1.0", true);
+    }
+});
