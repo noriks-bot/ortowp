@@ -71,3 +71,31 @@ add_action("wp_enqueue_scripts", function() {
         wp_deregister_style("global-styles");
     }
 }, 999);
+
+// Dequeue WC block styles on checkout
+add_action("wp_enqueue_scripts", function() {
+    if (is_checkout()) {
+        wp_dequeue_style("wc-blocks-style");
+        wp_dequeue_style("wc-blocks-style-coming-soon");
+        wp_dequeue_style("wp-block-library");
+        wp_dequeue_style("classic-theme-styles");
+        wp_dequeue_style("global-styles");
+        wp_dequeue_style("core-block-supports");
+    }
+}, 999);
+
+// Ensure WC checkout scripts are loaded
+add_action("wp_enqueue_scripts", function() {
+    if (is_checkout()) {
+        wp_enqueue_script("wc-checkout");
+    }
+}, 20);
+
+// Remove coupon message on checkout
+add_filter("woocommerce_coupons_enabled", function($enabled) {
+    if (is_checkout()) return false;
+    return $enabled;
+});
+
+// Hide order notes field
+add_filter("woocommerce_enable_order_notes_field", "__return_false");
