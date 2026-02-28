@@ -99,3 +99,54 @@ add_filter("woocommerce_coupons_enabled", function($enabled) {
 
 // Hide order notes field
 add_filter("woocommerce_enable_order_notes_field", "__return_false");
+
+// Dequeue WC Blocks scripts on checkout (conflicts with classic checkout form)
+add_action('wp_enqueue_scripts', function() {
+    if (is_checkout()) {
+        wp_dequeue_script('wc-cart-checkout-base-frontend');
+        wp_dequeue_script('wc-cart-checkout-vendors-frontend');  
+        wp_dequeue_script('wc-blocks-checkout');
+        wp_dequeue_script('wc-blocks-checkout-events');
+        wp_dequeue_style('wc-blocks-checkout-style');
+    }
+}, 999);
+
+// Customize place order button text
+add_filter('woocommerce_order_button_text', function() {
+    return '🔒 Oddaj naročilo';
+});
+
+// Add COD icon and free label to COD payment method
+add_filter('woocommerce_gateway_description', function($description, $id) {
+    if ($id === 'cod') {
+        return '';
+    }
+    return $description;
+}, 10, 2);
+
+add_filter('woocommerce_gateway_title', function($title, $id) {
+    if ($id === 'cod') {
+        return 'Plačilo po povzetju <span class="payment-fee-free">Brezplačno</span><div class="hs-checkout__payment-method-cod-icon-container"><img decoding="async" class="hs-checkout__payment-method-cod-icon" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg" /></div>';
+    }
+    return $title;
+}, 10, 2);
+
+// Style the WC place_order button with our classes
+add_action('wp_footer', function() {
+    if (!is_checkout()) return;
+    ?>
+    <script>
+    jQuery(function($) {
+        // Style the place order button
+        function styleButton() {
+            var btn = ;
+            if (btn.length && !btn.hasClass('button--green-gradient')) {
+                btn.addClass('button--l button--block button--green button--rounded button--green-gradient');
+            }
+        }
+        styleButton();
+        .on('updated_checkout', styleButton);
+    });
+    </script>
+    <?php
+});
