@@ -274,6 +274,16 @@ $delivery_dates = se_get_delivery_dates();
         /* === Warehouse badge === */
         .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; }
 
+        /* Override custom-checkout-si.css float layout — we use full-width fields */
+        p#billing_address_1_field,
+        p#billing_address_2_field,
+        p#billing_postcode_field,
+        p#billing_city_field {
+            clear: both !important;
+            float: none !important;
+            width: 100% !important;
+        }
+
         /* Match original si.stepease.eu input styling */
         .woocommerce-billing-fields__field-wrapper input.input-text,
         .woocommerce-billing-fields__field-wrapper input.form-input {
@@ -456,6 +466,9 @@ $delivery_dates = se_get_delivery_dates();
 
                             <!-- Hidden shipping method for WC -->
                             <input type="hidden" name="shipping_method[0]" value="free_shipping:1" />
+
+                            <!-- Fallback payment method (ensures COD is always submitted even if WC radios don't render) -->
+                            <input type="hidden" name="payment_method" id="payment_method_fallback" value="cod" />
 
                             <!-- Shipping Info Section with delivery dates -->
                             <div id="custom_shipping">
@@ -732,16 +745,27 @@ jQuery(function($) {
     });
 
     // Payment method selection
+    function syncPaymentMethod(method) {
+        // Sync to WC hidden radio if it exists
+        var $wcRadio = $('input[name="payment_method"][value="' + method + '"]').not('#payment_method_fallback');
+        if ($wcRadio.length) {
+            $wcRadio.prop('checked', true).trigger('change');
+        }
+        // Always update hidden fallback
+        $('#payment_method_fallback').val(method);
+    }
+
     $('.hs-payment-methods li').on('click', function() {
         $('.hs-payment-methods li').removeClass('active show-unavailable');
         $(this).addClass('active');
         var method = $(this).data('method');
         if (method === 'cod') {
-            $('input[name="payment_method"][value="cod"]').prop('checked', true);
+            syncPaymentMethod('cod');
             $('#hs-cod-prompt').slideDown(200);
         } else {
             $(this).addClass('show-unavailable');
-            $('input[name="payment_method"][value="cod"]').prop('checked', true);
+            // Only COD available, keep it selected
+            syncPaymentMethod('cod');
             $('#hs-cod-prompt').slideUp(200);
         }
     });
@@ -823,21 +847,42 @@ jQuery(function($) {
         });
     }, 500);
 
-    // Sync WC payment_method to COD on load
-    setTimeout(function() {
-        var $wcCod = $('input[name="payment_method"][value="cod"]');
+    // Sync WC payment_method to COD on load + after WC AJAX updates
+    function syncCodOnLoad() {
+        var $wcCod = $('input[name="payment_method"][value="cod"]').not('#payment_method_fallback');
         if ($wcCod.length) {
             $wcCod.prop('checked', true).trigger('change');
             console.log('[ortowp] COD payment method synced');
         } else {
-            console.warn('[ortowp] WC COD radio not found in DOM');
+            console.log('[ortowp] WC COD radio not found, using hidden fallback');
         }
-    }, 300);
+    }
+    setTimeout(syncCodOnLoad, 300);
+    // Re-sync after WC updates checkout (e.g., after address change triggers update_order_review)
+    $(document.body).on('updated_checkout', syncCodOnLoad);
 
     // Scroll to top
     $(document).on('click', '#scroll-to-top', function(e) {
         e.preventDefault();
         $('html, body').animate({ scrollTop: 0 }, 500);
+    });
+
+    // Ensure #place_order button has orange styling (override any green-gradient from app.css)
+    $(document.body).on('updated_checkout', function() {
+        $('#place_order').css({
+            'background': 'linear-gradient(135deg, #ff5b00, #e04e00)',
+            'background-color': '#ff5b00',
+            'color': '#fff',
+            'box-shadow': '0 3px 0 #c04000, 0 4px 12px rgba(255,91,0,0.3)',
+            'border': 'none',
+            'border-radius': '8px',
+            'font-size': '18px',
+            'font-weight': '700',
+            'padding': '18px 30px',
+            'width': '100%',
+            'margin-top': '15px',
+            'cursor': 'pointer'
+        });
     });
 
     // Debug
