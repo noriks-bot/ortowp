@@ -78,7 +78,7 @@ $item_label = $cart_count === 1 ? '1 izdelek' : $cart_count . ' izdelkov';
                             <div class="col-xs-11 vigo-wc-cart__item-wrapper">
                                 <div class="grid grid--middle grid--gaps">
                                     <div class="col-md-6 col-xs-12 product-name vigo-cart__item-name">
-                                        <?php echo wp_kses_post( $product_name . $item_data ); ?>&nbsp;
+                                        <?php echo wp_kses_post( $product_name ); ?>&nbsp;
                                     </div>
                                     <div class="col-md-2 col-xs-4 product-quantity vigo-cart__item-qty">
                                         <div class="quantity_select">
