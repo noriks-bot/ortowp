@@ -51,3 +51,15 @@ add_action("wp_enqueue_scripts", function() {
     }
 });
 
+
+// Dequeue WC block styles on product pages to prevent style conflicts
+add_action("wp_enqueue_scripts", function() {
+    if (is_product()) {
+        wp_dequeue_style("wc-blocks-style");
+        wp_dequeue_style("wc-blocks-style-coming-soon");
+        wp_dequeue_style("wp-block-library");
+        wp_dequeue_style("classic-theme-styles");
+        wp_dequeue_style("global-styles");
+        wp_dequeue_style("core-block-supports");
+    }
+}, 100);
