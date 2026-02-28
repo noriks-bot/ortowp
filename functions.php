@@ -50,3 +50,9 @@ add_action("wp_enqueue_scripts", function() {
         wp_enqueue_script("wc-atc-fix", get_template_directory_uri() . "/wc-atc-fix.js", array(), "1.0", true);
     }
 });
+
+// Override proceed to checkout button with vigoshop styling
+remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
+add_action( 'woocommerce_proceed_to_checkout', function() {
+    echo '<a href="' . esc_url( wc_get_checkout_url() ) . '" class="checkout-button button button--l alt wc-forward button--block button--green-gradient btn_bigger_proceed custom-cta-skin" style="background:#ff5b00 !important;color:#ffffff !important;border-color:#ff5b00 !important;box-shadow: 0 2px 0 #ff5b00 !important;">Na blagajno</a>';
+}, 20 );
