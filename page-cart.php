@@ -502,41 +502,61 @@ foreach ( $cart_items as $cart_item_key => $cart_item ) {
 <?php wp_footer(); ?>
 <script>
 jQuery(function($) {
-    // Upsell add-to-cart
-    var $upsellWrapper = $('.simple-upsells-wrapper');
-    var $checkbox = $('#upsell_product_46');
-    var adding = false;
 
-    // Click anywhere on the upsell section to toggle
-    $upsellWrapper.on('click', function(e) {
-        if (adding) return;
-        if ($checkbox.is(':checked')) return; // already added
-        adding = true;
-        $checkbox.prop('checked', true);
-        $upsellWrapper.css('opacity', '0.5');
+    // ── Bug fix 1: Upsell re-add ──
+    // Use event delegation so handlers survive WC AJAX cart updates
+    var upsellAdding = false;
 
-        // Add STEPROLL (product 46) to cart via WC native URL
+    function initUpsellState() {
+        <?php
+        $in_cart = false;
+        foreach (WC()->cart->get_cart() as $item) {
+            if ($item['product_id'] == 46) { $in_cart = true; break; }
+        }
+        if ($in_cart) echo '$("#upsell_product_46").prop("checked", true); $(".simple-upsells-wrapper").addClass("upsell-in-cart").css("opacity","0.6");';
+        ?>
+    }
+    initUpsellState();
+
+    $(document.body).on('click', '.simple-upsells-wrapper', function(e) {
+        if (upsellAdding) return;
+        var $cb = $('#upsell_product_46');
+        if ($cb.is(':checked')) return; // already in cart
+        upsellAdding = true;
+        $cb.prop('checked', true);
+        $(this).css('opacity', '0.5');
+
         $.post('<?php echo admin_url("admin-ajax.php"); ?>', {
             action: 'ortostep_add_to_cart',
             product_id: 46,
             quantity: 1
         }, function(resp) {
-            // Reload cart page to show updated totals
             window.location.reload();
         }).fail(function() {
-            // Fallback: direct add-to-cart URL
             window.location.href = '<?php echo esc_url(home_url("/?add-to-cart=46")); ?>';
         });
     });
 
-    // If STEPROLL already in cart, check the checkbox
-    <?php
-    $in_cart = false;
-    foreach (WC()->cart->get_cart() as $item) {
-        if ($item['product_id'] == 46) { $in_cart = true; break; }
-    }
-    if ($in_cart) echo '$checkbox.prop("checked", true); $upsellWrapper.css("opacity","0.6");';
-    ?>
+    // After WC AJAX removes an item, reset upsell state so it can be re-added
+    $(document.body).on('removed_from_cart updated_cart_totals', function() {
+        upsellAdding = false;
+        // Re-check if product 46 is still in cart by looking at DOM
+        var still = false;
+        $('.cart_item .product-remove .remove').each(function() {
+            if ($(this).data('product_id') == 46) still = true;
+        });
+        if (!still) {
+            $('#upsell_product_46').prop('checked', false);
+            $('.simple-upsells-wrapper').removeClass('upsell-in-cart').css('opacity', '1');
+        }
+    });
+
+    // ── Bug fix 2: Quantity change ──
+    // When quantity select changes, trigger the hidden "update cart" button
+    $(document.body).on('change', '.woocommerce-cart-form .qty', function() {
+        $('button[name="update_cart"]').removeClass('hidden').trigger('click');
+    });
+
 });
 </script>
 </body>
