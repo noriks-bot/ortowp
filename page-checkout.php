@@ -673,12 +673,19 @@ jQuery(function($) {
     // Custom place order button triggers the WC one
     $('#place_order_custom').on('click', function(e) {
         e.preventDefault();
+        // Validate terms checkbox
+        if (!$('#terms_accepted').is(':checked')) {
+            var errHtml = '<div class="woocommerce-error" role="alert"><ul><li>Prosimo, potrdite, da se strinjate s splo\u0161nimi pogoji poslovanja.</li></ul></div>';
+            $('.woocommerce-notices-wrapper').first().html(errHtml);
+            $('html, body').animate({ scrollTop: 0 }, 300);
+            return;
+        }
+        $('.woocommerce-notices-wrapper .woocommerce-error').remove();
         // Click the real WC place_order button
         var wcBtn = $('button#place_order');
         if (wcBtn.length) {
             wcBtn.trigger('click');
         } else {
-            // Fallback: submit the form
             $('form.checkout').trigger('submit');
         }
     });
