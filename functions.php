@@ -8,12 +8,11 @@ function ortostep_setup() {
 add_action('after_setup_theme', 'ortostep_setup');
 
 function ortostep_scripts() {
-    // Only enqueue our tiny WC integration script - all original CSS/JS is inline
     wp_enqueue_script('ortostep-wc', get_template_directory_uri() . '/js/main.js', array(), '2.0.0', true);
 }
 add_action('wp_enqueue_scripts', 'ortostep_scripts');
 
-// Remove ALL default WooCommerce styles - original has its own
+// Remove ALL default WooCommerce styles
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
 
 // Remove WooCommerce sidebar
@@ -44,15 +43,14 @@ add_filter('woocommerce_add_to_cart_redirect', function() {
     return wc_get_cart_url();
 });
 
-// Enqueue WC add-to-cart fix
+// Enqueue WC add-to-cart fix on product pages
 add_action("wp_enqueue_scripts", function() {
     if (is_product()) {
         wp_enqueue_script("wc-atc-fix", get_template_directory_uri() . "/wc-atc-fix.js", array(), "1.0", true);
     }
 });
 
-
-// Dequeue WC block styles on product pages to prevent style conflicts
+// Dequeue WC block styles on product pages
 add_action("wp_enqueue_scripts", function() {
     if (is_product()) {
         wp_dequeue_style("wc-blocks-style");
@@ -91,7 +89,7 @@ add_action("wp_enqueue_scripts", function() {
     }
 }, 20);
 
-// Remove coupon message on checkout
+// Remove coupon on checkout
 add_filter("woocommerce_coupons_enabled", function($enabled) {
     if (is_checkout()) return false;
     return $enabled;
@@ -100,53 +98,25 @@ add_filter("woocommerce_coupons_enabled", function($enabled) {
 // Hide order notes field
 add_filter("woocommerce_enable_order_notes_field", "__return_false");
 
-// Dequeue WC Blocks scripts on checkout (conflicts with classic checkout form)
-add_action('wp_enqueue_scripts', function() {
-    if (is_checkout()) {
-        wp_dequeue_script('wc-cart-checkout-base-frontend');
-        wp_dequeue_script('wc-cart-checkout-vendors-frontend');  
-        wp_dequeue_script('wc-blocks-checkout');
-        wp_dequeue_script('wc-blocks-checkout-events');
-        wp_dequeue_style('wc-blocks-checkout-style');
-    }
-}, 999);
-
 // Customize place order button text
 add_filter('woocommerce_order_button_text', function() {
     return '🔒 Oddaj naročilo';
 });
 
-// Add COD icon and free label to COD payment method
-add_filter('woocommerce_gateway_description', function($description, $id) {
-    if ($id === 'cod') {
-        return '';
-    }
-    return $description;
-}, 10, 2);
-
-add_filter('woocommerce_gateway_title', function($title, $id) {
-    if ($id === 'cod') {
-        return 'Plačilo po povzetju <span class="payment-fee-free">Brezplačno</span><div class="hs-checkout__payment-method-cod-icon-container"><img decoding="async" class="hs-checkout__payment-method-cod-icon" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg" /></div>';
-    }
-    return $title;
-}, 10, 2);
-
-// Style the WC place_order button with our classes
-add_action('wp_footer', function() {
-    if (!is_checkout()) return;
-    ?>
-    <script>
-    jQuery(function($) {
-        // Style the place order button
-        function styleButton() {
-            var btn = ;
-            if (btn.length && !btn.hasClass('button--green-gradient')) {
-                btn.addClass('button--l button--block button--green button--rounded button--green-gradient');
-            }
+// Translate WC strings to Slovenian
+add_filter('gettext', function($translated, $text, $domain) {
+    if ($domain === 'woocommerce') {
+        $translations = array(
+            'Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our %s.' =>
+                'Vaši osebni podatki bodo uporabljeni za obdelavo vašega naročila, podporo vaši izkušnji na tej spletni strani in za druge namene, opisane v naši %s.',
+            'privacy policy' => 'pravilnik o zasebnosti',
+            'Place order' => '🔒 Oddaj naročilo',
+            'Buy now' => '🔒 Oddaj naročilo',
+            'Kupite sedaj' => '🔒 Oddaj naročilo',
+        );
+        if (isset($translations[$text])) {
+            return $translations[$text];
         }
-        styleButton();
-        .on('updated_checkout', styleButton);
-    });
-    </script>
-    <?php
-});
+    }
+    return $translated;
+}, 10, 3);

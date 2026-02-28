@@ -1,9 +1,8 @@
 <?php
 /**
  * Checkout Page - Pixel-perfect copy of si.stepease.eu checkout
- * Uses WC checkout hooks for functional form processing
+ * Uses WC native checkout hooks for AJAX-safe payment/nonce handling
  */
-
 
 // Check if this is order-received endpoint
 global $wp;
@@ -56,8 +55,10 @@ if (isset($wp->query_vars['order-received'])) {
     return;
 }
 
-// Remove coupon notice from before_checkout_form
+// Remove coupon notice + login notice from before_checkout_form
 remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10);
+remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_login_form', 10);
+remove_action('woocommerce_before_checkout_form', 'woocommerce_output_all_notices', 10);
 
 function se_checkout_enqueue_page_styles() {
     $css_dir = get_template_directory_uri() . '/assets/css/';
@@ -99,11 +100,34 @@ add_action('wp_enqueue_scripts', function() {
     }
 }, 999);
 
+// Calculate delivery dates (next 2-3 business days)
+function se_get_delivery_dates() {
+    $now = new DateTime('now', new DateTimeZone('Europe/Ljubljana'));
+    $days_added = 0;
+    $start = clone $now;
+    while ($days_added < 2) {
+        $start->modify('+1 day');
+        if ($start->format('N') < 6) $days_added++;
+    }
+    $end = clone $start;
+    $days_added2 = 0;
+    while ($days_added2 < 1) {
+        $end->modify('+1 day');
+        if ($end->format('N') < 6) $days_added2++;
+    }
+    $months_sl = ['', 'jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'avg.', 'sep.', 'okt.', 'nov.', 'dec.'];
+    $days_sl = ['', 'ponedeljek', 'torek', 'sreda', 'četrtek', 'petek', 'sobota', 'nedelja'];
+    $d1 = $days_sl[(int)$start->format('N')] . ', ' . $start->format('j') . '.' . $start->format('n') . '.';
+    $d2 = $days_sl[(int)$end->format('N')] . ', ' . $end->format('j') . '.' . $end->format('n') . '.';
+    return $d1 . ' - ' . $d2;
+}
+
 // Get cart data for order summary
 $cart = WC()->cart;
 $cart_items = $cart->get_cart();
 $cart_total = $cart->get_total();
 $checkout = WC()->checkout();
+$delivery_dates = se_get_delivery_dates();
 ?><!DOCTYPE html>
 <html lang="sl-SI">
 <head>
@@ -116,68 +140,102 @@ $checkout = WC()->checkout();
         .woocommerce form .form-row .required { visibility: visible; }
         .woocommerce-product-gallery { opacity: 1 !important; }
 
-        /* Hide WC default shipping section - we show custom one */
+        /* Hide WC defaults we replace with custom */
         #shipping_method { display: none !important; }
         .woocommerce-shipping-totals { display: none !important; }
-        /* Hide additional fields (order notes) */
         .woocommerce-additional-fields { display: none !important; }
-        /* Hide default WC order review table */
         .woocommerce-checkout-review-order-table { display: none !important; }
-        /* Hide coupon form if it somehow appears */
         .woocommerce-form-coupon-toggle, .checkout_coupon { display: none !important; }
-        /* Style fixes for our custom elements */
-        .hs-delivery-type-container .container__buttons {
-            display: flex;
-            gap: 10px;
-        }
+        .woocommerce-form-login-toggle, .woocommerce-form-login { display: none !important; }
+        .woocommerce-privacy-policy-text { display: none !important; }
+        .woocommerce-terms-and-conditions-wrapper { display: none !important; }
+
+        /* Phone helper text */
+        .phone-helper { font-size: 12px; color: #999; margin-top: 4px; }
+
+        /* Delivery type buttons */
+        .hs-delivery-type-container .container__buttons { display: flex; gap: 10px; }
         .hs-delivery-type-container .delivery-type {
-            flex: 1;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s;
+            flex: 1; border: 2px solid #e0e0e0; border-radius: 8px;
+            padding: 15px; text-align: center; cursor: pointer; transition: border-color 0.2s;
         }
-        .hs-delivery-type-container .delivery-type.active {
-            border-color: #3DBD00;
-        }
-        .hs-delivery-type-container .delivery-type img {
-            max-width: 50px;
-            margin: 0 auto;
-            display: block;
-        }
-        .hs-delivery-type-container .container__title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        /* Paketomat fields */
+        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00; }
+        .hs-delivery-type-container .delivery-type img { max-width: 50px; margin: 0 auto; display: block; }
+        .hs-delivery-type-container .container__title { font-weight: bold; margin-bottom: 10px; }
+
+        /* Paketomat */
         .paketomat-fields { display: none; }
         .paketomat-fields.active { display: block; }
-        .paketomat-fields select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-top: 8px;
-        }
+        .paketomat-fields select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-top: 8px; }
+        .paketomat-fields .paketomat-title { font-weight: bold; font-size: 14px; text-transform: uppercase; margin-bottom: 5px; }
+
         /* Address hint */
-        .address-hint {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 5px;
-        }
+        .address-hint { font-size: 13px; color: #666; margin-bottom: 5px; }
+
         /* Home delivery fields */
         .home-delivery-fields { display: block; }
         .home-delivery-fields.hidden { display: none; }
+
+        /* Shipping date box */
+        .shipping_method_custom .checkedlabel .outer-wrapper {
+            display: flex; align-items: center; justify-content: space-between; width: 100%;
+        }
+        .shipping_method_custom .hs-custom-date {
+            color: #ff5b00; font-size: 14px;
+        }
+        .shipping_method_custom li {
+            border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px;
+            list-style: none; background: #fff8f5;
+        }
+        .shipping_method_custom .checkedlabel {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+        }
+        .shipping_method_custom .checkedlabel svg { width: 18px; flex-shrink: 0; }
+        .shipping_method_custom .inner-wrapper-img { display: flex; align-items: center; gap: 8px; }
+        .shipping_method_custom .tag--green { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .shipping_method_custom .delivery_img img { height: 20px; }
+        .shipping_method_custom { padding: 0; margin: 10px 0; }
+
+        /* Payment methods - custom visual */
+        .hs-payment-methods { list-style: none; padding: 0; margin: 0; }
+        .hs-payment-methods li {
+            border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 15px;
+            margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s;
+        }
+        .hs-payment-methods li.active { border-color: #3DBD00; background: #f8fff5; }
+        .hs-payment-methods li label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; }
+        .hs-payment-methods li .payment-icons { margin-left: auto; display: flex; gap: 5px; align-items: center; }
+        .hs-payment-methods li .payment-icons img { height: 22px; }
+        .hs-payment-methods .payment-fee-free { color: #3DBD00; font-weight: bold; font-size: 13px; margin-left: 5px; }
+        .hs-payment-methods .payment-unavailable { font-size: 12px; color: #999; padding: 8px 0 0 28px; display: none; }
+        .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
+
+        /* COD prompt */
+        .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 10px; background: #f8f8f8; border-radius: 8px; padding: 12px 15px; margin: 15px 0; }
+        .hs-cod-checkout-prompt .cod-prompt-text { font-size: 14px; }
+        .hs-cod-checkout-prompt .cod-prompt-image { width: 40px; }
+
+        /* VAT/customs */
+        .hs-vat-tax-prompt { display: flex; gap: 15px; justify-content: center; margin: 10px 0; }
+        .hs-vat-tax-prompt .tax-claim { font-size: 12px; color: #666; display: flex; align-items: center; gap: 4px; }
+        .hs-vat-tax-prompt .tax-claim::before { content: '✓'; color: #3DBD00; font-weight: bold; }
+
+        /* Custom checkboxes */
+        .hs-checkout-checkboxes { margin: 15px 0; }
+        .hs-checkout-checkboxes label { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #555; margin-bottom: 8px; cursor: pointer; }
+        .hs-checkout-checkboxes input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+        .hs-checkout-checkboxes a { color: #ff5b00; text-decoration: underline; }
+
+        /* Hide WC-generated #payment inner elements we replace visually */
+        .woocommerce-checkout-payment .wc_payment_methods { display: none !important; }
+        .woocommerce-checkout-payment .place-order { display: none !important; }
     </style>
 </head>
 <body class="wp-singular page-template-default page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7">
 
 <header class='vigo-header vigo-header--wc'>
     <div class='vigo-topbar vigo-topbar--wc container container--l'>
-        <div class='flex flex--middle flex--apart flex--gaps justify-baseline'>
-        </div>
+        <div class='flex flex--middle flex--apart flex--gaps justify-baseline'></div>
         <div class='flex flex--middle flex--apart flex--gaps'></div>
     </div>
 </header>
@@ -188,7 +246,6 @@ $checkout = WC()->checkout();
             <div class="woocommerce">
                 <div class="woocommerce-notices-wrapper"><?php wc_print_notices(); ?></div>
                 <div class="container container--xs bg--white wc-checkout-wrap">
-
                     <div class="before_form container container--xs">
 
                         <?php do_action('woocommerce_before_checkout_form', $checkout); ?>
@@ -200,15 +257,17 @@ $checkout = WC()->checkout();
                                 <div class="col-1 clearfix">
                                     <div class="woocommerce-billing-fields">
                                         <h3 class="checkout-billing-title">Plačilo in dostava</h3>
-
                                         <div class="woocommerce-billing-fields__field-wrapper">
+
                                             <!-- Phone -->
                                             <p class="form-row form-row-wide form-group col-xs-12 validate-required validate-phone" id="billing_phone_field" data-priority="10">
                                                 <label for="billing_phone" class="required_field">Telefon&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                 <span class="woocommerce-input-wrapper">
                                                     <input type="tel" class="input-text form-input" name="billing_phone" id="billing_phone" placeholder="Številka mobilnega telefona" value="" maxlength="16" aria-required="true" autocomplete="tel" />
+                                                    <span class="phone-helper">Primer: 031234567 · Za pomoč pri dostavi</span>
                                                 </span>
                                             </p>
+
                                             <!-- Email -->
                                             <p class="form-row form-row-wide form-group col-xs-12 validate-required validate-email" id="billing_email_field" data-priority="20">
                                                 <label for="billing_email" class="required_field">E-poštni naslov&nbsp;<span class="required" aria-hidden="true">*</span></label>
@@ -251,8 +310,8 @@ $checkout = WC()->checkout();
 
                                             <!-- Paketomat pickup point (hidden by default) -->
                                             <div class="paketomat-fields" id="paketomat-fields">
-                                                <p class="form-row form-row-wide form-group col-xs-12 validate-required" id="paketomat_location_field">
-                                                    <label for="paketomat_location" class="required_field">Izberi prevzemno točko&nbsp;<span class="required" aria-hidden="true">*</span></label>
+                                                <div class="paketomat-title">IZBERI PREVZEMNO TOČKO</div>
+                                                <p class="form-row form-row-wide form-group col-xs-12" id="paketomat_location_field">
                                                     <span class="woocommerce-input-wrapper">
                                                         <select name="paketomat_location" id="paketomat_location" class="form-input">
                                                             <option value="">-- Izberi prevzemno točko --</option>
@@ -282,28 +341,24 @@ $checkout = WC()->checkout();
                                             <!-- Home delivery address fields -->
                                             <div class="home-delivery-fields" id="home-delivery-fields">
                                                 <div class="form-row form-row-wide col-xs-12 address-hint">Vnesite naslov, na katerem ste <b>med 8. in 14. uro</b>.</div>
-                                                <!-- Street -->
                                                 <p class="form-row form-row-wide address-field form-group col-xs-12 validate-required" id="billing_address_1_field" data-priority="50">
                                                     <label for="billing_address_1" class="required_field">Ulica&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                     <span class="woocommerce-input-wrapper">
                                                         <input type="text" class="input-text form-input" name="billing_address_1" id="billing_address_1" placeholder="Ulica" value="" aria-required="true" maxlength="80" autocomplete="address-line1" />
                                                     </span>
                                                 </p>
-                                                <!-- House number -->
                                                 <p class="form-row form-row-wide address-field form-group col-xs-12 validate-required" id="billing_address_2_field" data-priority="60">
                                                     <label for="billing_address_2" class="screen-reader-text required_field">Hišna številka&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                     <span class="woocommerce-input-wrapper">
                                                         <input type="text" class="input-text form-input" name="billing_address_2" id="billing_address_2" placeholder="Hišna številka" value="" autocomplete="address-line2" maxlength="80" aria-required="true" />
                                                     </span>
                                                 </p>
-                                                <!-- Postal code -->
                                                 <p class="form-row form-row-wide address-field form-group col-xs-12 validate-required" id="billing_postcode_field" data-priority="65">
                                                     <label for="billing_postcode" class="required_field">Poštna številka&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                     <span class="woocommerce-input-wrapper">
                                                         <input type="tel" class="input-text form-input" name="billing_postcode" id="billing_postcode" placeholder="Poštna številka" value="" aria-required="true" maxlength="30" autocomplete="postal-code" />
                                                     </span>
                                                 </p>
-                                                <!-- City -->
                                                 <p class="form-row form-row-wide address-field form-group col-xs-12 validate-required" id="billing_city_field" data-priority="80">
                                                     <label for="billing_city" class="required_field">Mesto&nbsp;<span class="required" aria-hidden="true">*</span></label>
                                                     <span class="woocommerce-input-wrapper">
@@ -312,13 +367,9 @@ $checkout = WC()->checkout();
                                                 </p>
                                             </div>
 
-                                            <!-- Hidden country field -->
-                                            <p class="form-row form-row-wide address-field update_totals_on_change form-group col-xs-12 validate-required" id="billing_country_field" data-priority="90" style="display:none">
-                                                <label for="billing_country" class="required_field">Država / regija&nbsp;<span class="required" aria-hidden="true">*</span></label>
-                                                <span class="woocommerce-input-wrapper">
-                                                    <strong>Slovenija</strong>
-                                                    <input type="hidden" name="billing_country" id="billing_country" value="SI" aria-required="true" autocomplete="do-not-autofill" class="country_to_state" readonly="readonly" />
-                                                </span>
+                                            <!-- Hidden country -->
+                                            <p class="form-row" id="billing_country_field" style="display:none">
+                                                <input type="hidden" name="billing_country" id="billing_country" value="SI" class="country_to_state" readonly="readonly" />
                                             </p>
                                             <input type="hidden" name="billing_state" id="billing_state" value="" />
                                         </div>
@@ -329,21 +380,20 @@ $checkout = WC()->checkout();
                                 </div>
                             </div>
 
-                            <!-- Hidden shipping method - required for WC -->
+                            <!-- Hidden shipping method for WC -->
                             <input type="hidden" name="shipping_method[0]" value="free_shipping:1" />
 
-                            <!-- Shipping Info Section -->
+                            <!-- Shipping Info Section with delivery dates -->
                             <div id="custom_shipping">
                                 <h3>Dostava</h3>
                                 <ul class="shipping_method_custom">
                                     <li class="standard-shipping shipping-tab">
-                                        <input name="shipping_display" data-index="0" id="shipping_method_0_standard_custom"
-                                               value="standard" class="shipping_method_field" type="radio" checked>
+                                        <input name="shipping_display" id="shipping_method_0_standard_custom" value="standard" class="shipping_method_field" type="radio" checked style="display:none">
                                         <label for="shipping_method_0_standard_custom" class="checkedlabel">
-                                            <svg viewBox="0 0 19 14" fill="#3DBD00"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.5725 3.40179L8.14482 13.5874C7.5815 14.1375 6.66839 14.1375 6.1056 13.5874L0.422493 8.03956C-0.140831 7.48994-0.140831 6.59748 0.422493 6.04707L1.44121 5.05126C2.00471 4.50094 2.91854 4.50094 3.48132 5.05126L7.12254 8.60835L15.5145 0.412609C16.078-0.137536 16.9909-0.137536 17.5537 0.412609L18.5733 1.40842C19.1424 1.95795 19.1424 2.8505 18.5725 3.40179Z" /></svg>
+                                            <svg viewBox="0 0 19 14" fill="#3DBD00"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.5725 3.40179L8.14482 13.5874C7.5815 14.1375 6.66839 14.1375 6.1056 13.5874L0.422493 8.03956C-0.140831 7.48994-0.140831 6.59748 0.422493 6.04707L1.44121 5.05126C2.00471 4.50094 2.91854 4.50094 3.48132 5.05126L7.12254 8.60835L15.5145 0.412609C16.078-0.137536 16.9909-0.137536 17.5537 0.412609L18.5733 1.40842C19.1424 1.95795 19.1424 2.8505 18.5725 3.40179Z"/></svg>
                                             <div class="outer-wrapper">
                                                 <div class="inner-wrapper-dates">
-                                                    <strong class="hs-custom-date">2-3 delovne dni</strong>
+                                                    <strong class="hs-custom-date"><?php echo esc_html($delivery_dates); ?></strong>
                                                 </div>
                                                 <div class="inner-wrapper-img">
                                                     <span class="shipping_method_delivery_price tag tag--green">Brezplačno</span>
@@ -359,44 +409,59 @@ $checkout = WC()->checkout();
                                 </div>
                             </div>
 
-                            <!-- Payment Methods -->
+                            <!-- Payment Methods - 3 options like original -->
                             <h3 class="payment-title">Način plačila</h3>
-                            <div id="payment" class="woocommerce-checkout-payment">
-                                <ul class="wc_payment_methods payment_methods methods">
-                                    <li class="wc_payment_method payment_method_cod">
-                                        <input id="payment_method_cod" type="radio" class="input-radio" name="payment_method" value="cod" checked='checked' data-order_button_text="" />
-                                        <label for="payment_method_cod">
-                                            Plačilo po povzetju <span class="payment-fee-free">Brezplačno</span>
-                                            <div class="hs-checkout__payment-method-cod-icon-container">
-                                                <img decoding="async" class="hs-checkout__payment-method-cod-icon" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg" />
-                                            </div>
-                                        </label>
-                                    </li>
-                                </ul>
+                            <ul class="hs-payment-methods">
+                                <li class="active" data-method="cod">
+                                    <label>
+                                        <input type="radio" name="payment_method" value="cod" checked class="input-radio" />
+                                        Plačilo po povzetju <span class="payment-fee-free">Brezplačno</span>
+                                        <span class="payment-icons">
+                                            <img src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg" alt="COD" />
+                                        </span>
+                                    </label>
+                                </li>
+                                <li data-method="card">
+                                    <label>
+                                        <input type="radio" name="payment_method_visual" value="card" class="input-radio" />
+                                        Kreditna kartica
+                                        <span class="payment-icons">
+                                            <img src="https://images.vigo-shop.com/general/payment/visa.svg" alt="Visa" />
+                                            <img src="https://images.vigo-shop.com/general/payment/mastercard_icon.svg" alt="Mastercard" />
+                                            <img src="https://images.vigo-shop.com/general/payment/maestro-icon.svg" alt="Maestro" />
+                                        </span>
+                                    </label>
+                                    <div class="payment-unavailable">Trenutno ni na voljo. Prosimo, izberite drugo možnost plačila.</div>
+                                </li>
+                                <li data-method="paypal">
+                                    <label>
+                                        <input type="radio" name="payment_method_visual" value="paypal" class="input-radio" />
+                                        PayPal
+                                        <span class="payment-icons">
+                                            <img src="https://images.vigo-shop.com/general/payment/paypal_icon.svg" alt="PayPal" />
+                                        </span>
+                                    </label>
+                                    <div class="payment-unavailable">Trenutno ni na voljo. Prosimo, izberite drugo možnost plačila.</div>
+                                </li>
+                            </ul>
 
-                                <div class="form-row place-order">
-                                    <noscript>
-                                        Ker vaš brskalnik ne podpira JavaScript-a, oz. je le-ta onemogočen, kliknite gumb <em>Posodobi znesek</em> preden oddate naročilo.
-                                        <br/><button type="submit" class="button alt" name="woocommerce_checkout_update_totals" value="Posodobi znesek">Posodobi znesek</button>
-                                    </noscript>
+                            <!-- COD prompt -->
+                            <div class="hs-cod-checkout-prompt" id="hs-cod-prompt">
+                                <img decoding="async" class="cod-prompt-image" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg">
+                                <div class="cod-prompt-text">Zaključi nakup sedaj, <strong>plačaj po povzetju 🙂</strong></div>
+                            </div>
 
-                                    <div class="woocommerce-terms-and-conditions-wrapper"></div>
+                            <!-- VAT/Customs text -->
+                            <div class="hs-vat-tax-prompt">
+                                <span class="tax-claim">Brez dodatnih stroškov za carino</span>
+                                <span class="tax-claim">DDV je vključen v ceno</span>
+                            </div>
 
-                                    <div id="hs-cod-checkout-prompt" style="display:none;">
-                                        <div class="cod-prompt-text">Zaključi nakup sedaj, <strong>plačaj po povzetju 🙂</strong></div>
-                                        <img decoding="async" class="cod-prompt-image" src="https://images.vigo-shop.com/general/checkout/cod/uni_cash_on_delivery.svg">
-                                    </div>
-
-                                    <div id="hs-vat-tax-checkout-prompt">
-                                        <span class="tax-and-vat-checkout-claims">Brez dodatnih stroškov za carino</span>
-                                        <span class="tax-and-vat-checkout-claims">DDV je vključen v ceno</span>
-                                    </div>
-
-                                    <!-- Order Summary -->
-                                    <h3 class="place-order-title" style="display:block;">Povzetek naročila</h3>
-                                    <div class="vigo-checkout-total order-total shop_table woocommerce-checkout-review-order-table-custom">
-                                        <div class="grid m-top--s review-all-products-container">
-                                            <div class="col-xs-12 f--m flex flex--vertical vigo-checkout-total__content">
+                            <!-- Order Summary -->
+                            <h3 class="place-order-title" style="display:block;">Povzetek naročila</h3>
+                            <div class="vigo-checkout-total order-total shop_table vigo-checkout-total-custom">
+                                <div class="grid m-top--s review-all-products-container">
+                                    <div class="col-xs-12 f--m flex flex--vertical vigo-checkout-total__content">
 <?php foreach ($cart_items as $cart_item_key => $cart_item) :
     $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
     if (!$_product || !$_product->exists() || $cart_item['quantity'] <= 0) continue;
@@ -413,43 +478,53 @@ $checkout = WC()->checkout();
         }
     }
 ?>
-                                                <div class="c--darkgray review-section-container">
-                                                    <div class="review-product-info">
-                                                        <div><?php echo esc_html($cart_item['quantity']); ?>x <?php echo wp_kses_post($product_name); ?></div>
+                                        <div class="c--darkgray review-section-container">
+                                            <div class="review-product-info">
+                                                <div><?php echo esc_html($cart_item['quantity']); ?>x <?php echo wp_kses_post($product_name); ?></div>
 <?php if ($attributes_html) : ?>
-                                                        <div class="review-product-info__attributes"><?php echo $attributes_html; ?></div>
+                                                <div class="review-product-info__attributes"><?php echo $attributes_html; ?></div>
 <?php endif; ?>
-                                                    </div>
-                                                    <div class="info-price">
-                                                        <span class="review-sale-price"><?php echo $product_price; ?></span>
-                                                    </div>
-                                                    <div class="review-product-remove"></div>
-                                                </div>
-<?php endforeach; ?>
-                                                <!-- Shipping row -->
-                                                <div class="c--darkgray review-section-container review-addons shipping_order_review">
-                                                    <div class="review-addons-title"><div>Standardna dostava</div></div>
-                                                    <div class="review-addons-price review-sale-price">Brezplačno</div>
-                                                    <div class="review-product-remove"></div>
-                                                </div>
                                             </div>
+                                            <div class="info-price"><span class="review-sale-price"><?php echo $product_price; ?></span></div>
+                                            <div class="review-product-remove"></div>
                                         </div>
-                                        <div class="vigo-checkout-total__sum flex flex--middle border_price">
-                                            <div class="flex__item f--l">
-                                                Skupni znesek: <span class="f--bold price_total_wrapper"><?php echo $cart_total; ?></span>
-                                            </div>
+<?php endforeach; ?>
+                                        <div class="c--darkgray review-section-container review-addons shipping_order_review">
+                                            <div class="review-addons-title"><div>Standardna dostava</div></div>
+                                            <div class="review-addons-price review-sale-price">Brezplačno</div>
+                                            <div class="review-product-remove"></div>
                                         </div>
                                     </div>
-
-                                    <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
+                                </div>
+                                <div class="vigo-checkout-total__sum flex flex--middle border_price">
+                                    <div class="flex__item f--l">
+                                        Skupni znesek: <span class="f--bold price_total_wrapper"><?php echo $cart_total; ?></span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Place Order Button & Warranty -->
+                            <!-- WC hidden payment div (needed for nonce + AJAX) -->
+                            <?php do_action('woocommerce_checkout_order_review'); ?>
+
+                            <!-- Place Order Button -->
                             <div class="custom-cta-skin" style="--cta-bg:#ff5b00;--cta-text:#ffffff">
-                                <div id="order_review" class="woocommerce-checkout-review-order container container--xs bg--white">
-                                    <button type="submit" class="button alt button--l button--block button--green button--rounded button--green-gradient" name="woocommerce_checkout_place_order" id="place_order" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
+                                <div class="woocommerce-checkout-review-order container container--xs bg--white">
+                                    <button type="submit" class="button alt button--l button--block button--green button--rounded button--green-gradient" name="woocommerce_checkout_place_order" id="place_order_custom" data-value="Oddaj naročilo">🔒 Oddaj naročilo</button>
                                 </div>
+
+                                <!-- Checkboxes -->
+                                <div class="hs-checkout-checkboxes">
+                                    <label>
+                                        <input type="checkbox" name="terms_accepted" id="terms_accepted" value="1" />
+                                        Strinjam se s <a href="https://ortowp.noriks.com/splosni-pogoji-poslovanja/" target="_blank">splošnimi pogoji poslovanja</a> in <a href="https://ortowp.noriks.com/varnostna-politika/" target="_blank">varnostno politiko</a>.
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="marketing_consent" id="marketing_consent" value="1" />
+                                        Želim prejemati obvestila o akcijah in posebnih ponudbah.
+                                    </label>
+                                </div>
+
+                                <!-- Warranty badge -->
                                 <div class="checkout-warranty flex flex--center flex--middle">
                                     <div class="flex__item--autosize checkout-warranty__icon">
                                         <img decoding="async" src="https://images.vigo-shop.com/general/guarantee_money_back/satisfaction_icon_si.png">
@@ -459,13 +534,13 @@ $checkout = WC()->checkout();
                                         Možnost vračila denarja v roku 90 dni
                                     </div>
                                 </div>
+
                                 <div class="agreed_terms_txt">
                                     <span class="policy-agreement-obligation">S klikom na gumb <strong>Oddaj naročilo</strong> se strinjam z oddajo naročila z obveznostjo plačila.</span>
                                 </div>
                             </div>
 
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -511,21 +586,14 @@ $checkout = WC()->checkout();
                     </div>
                 </div>
                 <div class="footer-payment__top footer-payment__top--mobile hiddenOnDesktop s-top--m">
-                    <a class="button button--link" id="scroll-to-top">
-                        <div class="flex flex--autosize flex--middle flex--center">
-                            <div class="flex__item back-top-icon"><svg viewBox="0 0 17 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M15.8654 2.30769H1.05769C0.473758 2.30769 0 1.79119 0 1.15409C0 0.516985 0.473758 0 1.05769 0H15.8654C16.4515 0 16.9231 0.516504 16.9231 1.15361C16.9231 1.79071 16.4493 2.30769 15.8654 2.30769ZM7.36833 8.30031L3.42706 12.3225C3.01302 12.7461 2.32115 12.7636 1.88252 12.3662C1.44298 11.9687 1.42157 11.3049 1.83561 10.8813L7.66581 4.93316C8.07847 4.50946 8.8445 4.50946 9.25726 4.93316L15.0874 10.8813C15.5014 11.3036 15.4803 11.968 15.0405 12.3644C14.8296 12.5557 14.5606 12.65 14.2916 12.65C14.0001 12.65 13.7132 12.5408 13.4959 12.3203L9.55464 8.30031V18.9501C9.55464 19.5297 9.06272 20 8.46149 20C7.86025 20 7.36833 19.5283 7.36833 18.9475V8.30031Z" /></svg></div>
-                            <div class="flex__item f--m c--lightgray scroll-to-top-text">Nazaj na vrh</div>
-                        </div>
-                    </a>
+                    <a class="button button--link" id="scroll-to-top"><div class="flex flex--autosize flex--middle flex--center"><div class="flex__item back-top-icon"><svg viewBox="0 0 17 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M15.8654 2.30769H1.05769C0.473758 2.30769 0 1.79119 0 1.15409C0 0.516985 0.473758 0 1.05769 0H15.8654C16.4515 0 16.9231 0.516504 16.9231 1.15361C16.9231 1.79071 16.4493 2.30769 15.8654 2.30769ZM7.36833 8.30031L3.42706 12.3225C3.01302 12.7461 2.32115 12.7636 1.88252 12.3662C1.44298 11.9687 1.42157 11.3049 1.83561 10.8813L7.66581 4.93316C8.07847 4.50946 8.8445 4.50946 9.25726 4.93316L15.0874 10.8813C15.5014 11.3036 15.4803 11.968 15.0405 12.3644C14.8296 12.5557 14.5606 12.65 14.2916 12.65C14.0001 12.65 13.7132 12.5408 13.4959 12.3203L9.55464 8.30031V18.9501C9.55464 19.5297 9.06272 20 8.46149 20C7.86025 20 7.36833 19.5283 7.36833 18.9475V8.30031Z"/></svg></div><div class="flex__item f--m c--lightgray scroll-to-top-text">Nazaj na vrh</div></div></a>
                 </div>
             </div>
             <div class="flex flex--autosize flex--apart footer-payment--wrapper">
                 <div class="flex__item col-md-5 footer-payment__first">
                     <div class="flex flex--center flex--wrap flex--autosize flex--gaps flex--bottom">
                         <div class="smdWrapperTag"></div>
-                        <div class="flex__item norton-security-logo">
-                            <img src="https://images.vigo-shop.com/general/footer/norton_logo.svg">
-                        </div>
+                        <div class="flex__item norton-security-logo"><img src="https://images.vigo-shop.com/general/footer/norton_logo.svg"></div>
                         <div class="flex__item">
                             <div class="flex flex--autosize flex--bottom">
                                 <div class="flex__item"><svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M10.9107 7.38848H11.6071C12.3761 7.38848 13 8.04356 13 8.85098V14.701C13 15.5084 12.3761 16.1635 11.6071 16.1635H1.39286C0.623884 16.1635 0 15.5084 0 14.701V8.85098C0 8.04356 0.623884 7.38848 1.39286 7.38848H2.08929V5.19473C2.08929 2.64145 4.0683 0.563477 6.5 0.563477C8.9317 0.563477 10.9107 2.64145 10.9107 5.19473V7.38848ZM4.41071 5.19473V7.38848H8.58928V5.19473C8.58928 3.98512 7.65201 3.00098 6.5 3.00098C5.34799 3.00098 4.41071 3.98512 4.41071 5.19473Z" fill="white"/></svg></div>
@@ -536,12 +604,7 @@ $checkout = WC()->checkout();
                     </div>
                 </div>
                 <div class="flex__item col-md-3 footer-payment__top hiddenOnMobile">
-                    <a class="button button--link" id="scroll-to-top">
-                        <div class="flex flex--autosize flex--middle">
-                            <div class="flex__item"><svg viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.8654 2.30769H1.05769C0.473758 2.30769 0 1.79119 0 1.15409C0 0.516985 0.473758 0 1.05769 0H15.8654C16.4515 0 16.9231 0.516504 16.9231 1.15361C16.9231 1.79071 16.4493 2.30769 15.8654 2.30769ZM7.36833 8.30031L3.42706 12.3225C3.01302 12.7461 2.32115 12.7636 1.88252 12.3662C1.44298 11.9687 1.42157 11.3049 1.83561 10.8813L7.66581 4.93316C8.07847 4.50946 8.8445 4.50946 9.25726 4.93316L15.0874 10.8813C15.5014 11.3036 15.4803 11.968 15.0405 12.3644C14.8296 12.5557 14.5606 12.65 14.2916 12.65C14.0001 12.65 13.7132 12.5408 13.4959 12.3203L9.55464 8.30031V18.9501C9.55464 19.5297 9.06272 20 8.46149 20C7.86025 20 7.36833 19.5283 7.36833 18.9475V8.30031Z" fill="#99A0A7"/></svg></div>
-                            <div class="flex__item f--m c--lightgray">Nazaj na vrh</div>
-                        </div>
-                    </a>
+                    <a class="button button--link" id="scroll-to-top"><div class="flex flex--autosize flex--middle"><div class="flex__item"><svg viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.8654 2.30769H1.05769C0.473758 2.30769 0 1.79119 0 1.15409C0 0.516985 0.473758 0 1.05769 0H15.8654C16.4515 0 16.9231 0.516504 16.9231 1.15361C16.9231 1.79071 16.4493 2.30769 15.8654 2.30769ZM7.36833 8.30031L3.42706 12.3225C3.01302 12.7461 2.32115 12.7636 1.88252 12.3662C1.44298 11.9687 1.42157 11.3049 1.83561 10.8813L7.66581 4.93316C8.07847 4.50946 8.8445 4.50946 9.25726 4.93316L15.0874 10.8813C15.5014 11.3036 15.4803 11.968 15.0405 12.3644C14.8296 12.5557 14.5606 12.65 14.2916 12.65C14.0001 12.65 13.7132 12.5408 13.4959 12.3203L9.55464 8.30031V18.9501C9.55464 19.5297 9.06272 20 8.46149 20C7.86025 20 7.36833 19.5283 7.36833 18.9475V8.30031Z" fill="#99A0A7"/></svg></div><div class="flex__item f--m c--lightgray">Nazaj na vrh</div></div></a>
                 </div>
                 <div class="flex__item col-md-4 footer-payment__badges">
                     <div class="flex flex--center flex--wrap flex--middle">
@@ -557,24 +620,17 @@ $checkout = WC()->checkout();
     </div>
     <div class="footer-copyright bg--primary-dark c--white">
         <div class="footer-copyright__content">
-            <div class="t--center f--s c--gray">Copyright © 2018 - 2026 - Spletna trgovina Stepease (HS plus d.o.o)</div>
+            <div class="t--center f--s c--gray">Copyright &copy; 2018 - 2026 - Spletna trgovina Stepease (HS plus d.o.o)</div>
         </div>
     </div>
 </footer>
 <footer class="footer-mobile"></footer>
-<div class="hs_loader">
-    <img src="https://images.vigo-shop.com/general/footer/stepease_footer_logo.svg">
-</div>
+<div class="hs_loader"><img src="https://images.vigo-shop.com/general/footer/stepease_footer_logo.svg"></div>
 
 <script type='text/javascript'>
-(function () {
-    var c = document.body.className;
-    c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
-    document.body.className = c;
-})();
+(function(){var c=document.body.className;c=c.replace(/woocommerce-no-js/,'woocommerce-js');document.body.className=c;})();
 </script>
 
-<!-- Delivery type toggle JS -->
 <script>
 jQuery(function($) {
     // Delivery type toggle
@@ -588,8 +644,6 @@ jQuery(function($) {
         $machineBtn.removeClass('active');
         $homeFields.removeClass('hidden');
         $pakFields.removeClass('active');
-        // Restore address required
-        $('#billing_address_1, #billing_address_2, #billing_postcode, #billing_city').attr('aria-required', 'true');
     });
 
     $machineBtn.on('click', function() {
@@ -597,17 +651,39 @@ jQuery(function($) {
         $homeBtn.removeClass('active');
         $homeFields.addClass('hidden');
         $pakFields.addClass('active');
-        // Remove address required for home
-        $('#billing_address_1, #billing_address_2, #billing_postcode, #billing_city').attr('aria-required', 'false');
     });
 
-    // Scroll to top
-    $(document).on('click', '#scroll-to-top', function(e) {
+    // Payment method selection
+    $('.hs-payment-methods li').on('click', function() {
+        $('.hs-payment-methods li').removeClass('active show-unavailable');
+        $(this).addClass('active');
+        var method = $(this).data('method');
+        if (method === 'cod') {
+            // Set real WC payment method to COD
+            $('input[name="payment_method"][value="cod"]').prop('checked', true);
+            $('#hs-cod-prompt').show();
+        } else {
+            $(this).addClass('show-unavailable');
+            // Keep COD as actual method (others not available)
+            $('input[name="payment_method"][value="cod"]').prop('checked', true);
+            $('#hs-cod-prompt').hide();
+        }
+    });
+
+    // Custom place order button triggers the WC one
+    $('#place_order_custom').on('click', function(e) {
         e.preventDefault();
-        $('html, body').animate({ scrollTop: 0 }, 500);
+        // Click the real WC place_order button
+        var wcBtn = $('button#place_order');
+        if (wcBtn.length) {
+            wcBtn.trigger('click');
+        } else {
+            // Fallback: submit the form
+            $('form.checkout').trigger('submit');
+        }
     });
 
-    // When paketomat selected, copy location to address field for WC
+    // When paketomat selected, copy location to address
     $('#paketomat_location').on('change', function() {
         var loc = $(this).val();
         if (loc) {
@@ -617,16 +693,19 @@ jQuery(function($) {
             $('#billing_city').val('Ljubljana');
         }
     });
+
+    // Scroll to top
+    $(document).on('click', '#scroll-to-top', function(e) {
+        e.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 500);
+    });
 });
 </script>
 
-<!-- Contact Info Modal -->
 <div id="contact-info-modal" class="mobile-notice-modal hidden">
     <div class="wrapper">
         <div class='mobile-notice-modal__content'>
-            <div class="modal-close">
-                <img id="close_terms_conditions" src="https://images.vigo-shop.com/general/remove.png" alt="Close">
-            </div>
+            <div class="modal-close"><img id="close_terms_conditions" src="https://images.vigo-shop.com/general/remove.png" alt="Close"></div>
             <div class='mobile-notice-modal__head s-all--s'>
                 <div class="f--l f--bold c--darkgray">Potrebujete pomoč pri nakupu?</div>
                 <div class="f--s c--gray">Za vas smo dosegljivi vsak delovnik od <strong>08:00 - 16:00</strong>.</div>
