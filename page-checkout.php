@@ -153,19 +153,31 @@ $delivery_dates = se_get_delivery_dates();
 
         /* WC #place_order button — ORANGE */
         .woocommerce-checkout-payment .place-order { padding: 0 !important; margin: 0 !important; }
+        body.woocommerce-checkout #place_order,
+        body.woocommerce-checkout button#place_order,
+        body.woocommerce-checkout input#place_order,
+        body #order_review #place_order,
         #place_order {
-            width: 100%;
-            padding: 18px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            width: 100% !important;
+            padding: 18px 30px !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
             background: linear-gradient(135deg, #ff5b00, #e04e00) !important;
-            color: #fff;
-            margin-top: 15px;
+            background-color: #ff5b00 !important;
+            color: #fff !important;
+            margin-top: 15px !important;
+            box-shadow: 0 3px 0 #c04000, 0 4px 12px rgba(255,91,0,0.3) !important;
+            line-height: 1.4 !important;
+            display: block !important;
+            text-align: center !important;
         }
-        #place_order:hover { background: linear-gradient(135deg, #e04e00, #c94500) !important; }
+        body.woocommerce-checkout #place_order:hover,
+        #place_order:hover {
+            background: linear-gradient(135deg, #e04e00, #c94500) !important;
+        }
 
         /* Delivery toggle: home vs paketomat */
         .home-delivery-fields { display: block; }
@@ -261,6 +273,31 @@ $delivery_dates = se_get_delivery_dates();
 
         /* === Warehouse badge === */
         .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; }
+
+        /* Match original si.stepease.eu input styling */
+        .woocommerce-billing-fields__field-wrapper input.input-text,
+        .woocommerce-billing-fields__field-wrapper input.form-input {
+            background-color: #fff !important;
+            box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,0.25) !important;
+            min-height: 60px !important;
+            border: 1.5px solid #c9c9c9 !important;
+            border-radius: 4px !important;
+            font-size: 18px !important;
+            box-sizing: border-box !important;
+        }
+        .woocommerce-billing-fields__field-wrapper .field--not-empty input {
+            padding-bottom: 0 !important;
+            padding-top: 20px !important;
+        }
+        .woocommerce-billing-fields__field-wrapper .field--not-empty > label {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        /* Ensure WC order review + place order are visible */
+        #order_review { display: block !important; }
+        #order_review > .woocommerce-checkout-payment { display: block !important; }
+        #order_review > .woocommerce-checkout-payment > .place-order { display: block !important; }
+
     </style>
 </head>
 <body class="wp-singular page-template-default page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7">
@@ -768,11 +805,46 @@ jQuery(function($) {
     // Show COD prompt on load (COD is default)
     $('#hs-cod-prompt').show();
 
+    // Floating labels: add field--not-empty when input has value
+    function updateFieldState($el) {
+        var $row = $el.closest('.form-row');
+        if ($el.val() && $el.val().length > 0) {
+            $row.addClass('field--not-empty');
+        } else {
+            $row.removeClass('field--not-empty');
+        }
+    }
+    $('.woocommerce-billing-fields__field-wrapper input').on('input change blur', function() {
+        updateFieldState($(this));
+    });
+    setTimeout(function() {
+        $('.woocommerce-billing-fields__field-wrapper input').each(function() {
+            updateFieldState($(this));
+        });
+    }, 500);
+
+    // Sync WC payment_method to COD on load
+    setTimeout(function() {
+        var $wcCod = $('input[name="payment_method"][value="cod"]');
+        if ($wcCod.length) {
+            $wcCod.prop('checked', true).trigger('change');
+            console.log('[ortowp] COD payment method synced');
+        } else {
+            console.warn('[ortowp] WC COD radio not found in DOM');
+        }
+    }, 300);
+
     // Scroll to top
     $(document).on('click', '#scroll-to-top', function(e) {
         e.preventDefault();
         $('html, body').animate({ scrollTop: 0 }, 500);
     });
+
+    // Debug
+    console.log('[ortowp] jQuery:', $.fn.jquery);
+    console.log('[ortowp] wc_checkout_params:', typeof wc_checkout_params !== 'undefined' ? 'OK' : 'MISSING');
+    console.log('[ortowp] form.checkout:', $('form.checkout').length);
+    console.log('[ortowp] #place_order:', $('#place_order').length);
 });
 </script>
 
