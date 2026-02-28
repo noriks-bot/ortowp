@@ -9,7 +9,7 @@ function se_cart_enqueue_page_styles() {
     $css_dir = get_template_directory_uri() . '/assets/css/';
     $css_files = array(
         'select2', 'brands', 'hsplus-child', 'app', 'swiper.min', 'stepease',
-        'agent-kc', 'cart-dynamic-offer', 'cart-general', 'cart-upsell',
+        'agent-kc', 'cart-dynamic-offer', 'cart-general', 'cart-go-to-checkout-sticky', 'cart-upsell',
         'checkout-extra-triggers', 'cookie-consent',
         'custom-payment-notice', 'header', 'hide-payments-test-product',
         'general-shop-elements', 'lazy-load', 'lottery-ticket',
