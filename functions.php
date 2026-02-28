@@ -62,4 +62,12 @@ add_action("wp_enqueue_scripts", function() {
         wp_dequeue_style("global-styles");
         wp_dequeue_style("core-block-supports");
     }
-}, 100);
+}, 999);
+add_action("wp_enqueue_scripts", function() {
+    if (is_product()) {
+        wp_deregister_style("wc-blocks-style");
+        wp_deregister_style("wc-blocks-style-coming-soon");
+        wp_deregister_style("wp-block-library");
+        wp_deregister_style("global-styles");
+    }
+}, 999);
