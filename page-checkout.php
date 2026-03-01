@@ -188,6 +188,9 @@ $delivery_dates = se_get_delivery_dates();
         .paketomat-fields.active,
         div.paketomat-fields.active,
         #paketomat-fields.active { display: block !important; }
+        /* Hide WC-rendered paketomat field (rendered via billing fields hook) */
+        #paketomat_location_field { display: none !important; }
+        #paketomat_location_field.active { display: block !important; }
         /* Hide ALL address fields when paketomat is active (including WC-regenerated ones) */
         body.delivery-paketomat #home-delivery-fields,
         body.delivery-paketomat .address-hint,
@@ -626,7 +629,7 @@ $delivery_dates = se_get_delivery_dates();
                                         </div>
 <?php endforeach; ?>
                                         <div class="c--darkgray review-section-container review-addons shipping_order_review">
-                                            <div class="review-addons-title"><div>Dostava na prevzemno točko</div></div>
+                                            <div class="review-addons-title"><div>Standardna dostava</div></div>
                                             <div class="review-addons-price review-sale-price">0,00€</div>
                                             <div class="review-product-remove"></div>
                                         </div>
@@ -780,6 +783,7 @@ jQuery(function($) {
         $machineBtn.removeClass('active');
         $homeFields.removeClass('hidden');
         $pakFields.removeClass('active');
+        $('#paketomat_location_field').removeClass('active');
         $('body').removeClass('delivery-paketomat');
         $('.shipping_order_review .review-addons-title div').text('Standardna dostava');
     });
@@ -789,6 +793,7 @@ jQuery(function($) {
         $homeBtn.removeClass('active');
         $homeFields.addClass('hidden');
         $pakFields.addClass('active');
+        $('#paketomat_location_field').addClass('active');
         $('body').addClass('delivery-paketomat');
         $('.shipping_order_review .review-addons-title div').text('Dostava na prevzemno točko');
     });
