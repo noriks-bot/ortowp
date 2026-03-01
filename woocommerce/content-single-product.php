@@ -6,6 +6,27 @@
 get_header();
 global $product;
 $pid = (is_object($product) && method_exists($product, 'get_id')) ? $product->get_id() : 0;
+
+// Build mapping from external variationId → WC variation_id by color+size
+$wc_variation_map = array();
+if ($product && $product->is_type('variable')) {
+    $color_map = array('Orange' => 'oranzna', 'Black' => 'crna', 'Grey' => 'siva');
+    foreach ($product->get_available_variations() as $v) {
+        $wc_color = $v['attributes']['attribute_pa_barva'] ?? '';
+        $wc_size = $v['attributes']['attribute_pa_velikost'] ?? '';
+        // Normalize: WC uses "35-36", external uses "35/36"
+        $wc_size_slash = str_replace('-', '/', $wc_size);
+        foreach ($color_map as $ext_color => $wc_color_val) {
+            if ($wc_color === $wc_color_val) {
+                // Key matches external "names" like "Orange 35/36" or "Orange 49-50"
+                $key1 = $ext_color . ' ' . $wc_size_slash;
+                $key2 = $ext_color . ' ' . $wc_size;
+                $wc_variation_map[$key1] = $v['variation_id'];
+                $wc_variation_map[$key2] = $v['variation_id'];
+            }
+        }
+    }
+}
 ?>
 <!-- WooCommerce hidden add-to-cart form -->
 <form id="wc-add-to-cart-form" method="post" action="<?php echo esc_url($product ? $product->get_permalink() : ''); ?>" style="display:none !important;">
@@ -14,6 +35,28 @@ $pid = (is_object($product) && method_exists($product, 'get_id')) ? $product->ge
     <input type="hidden" name="quantity" id="wc-quantity" value="1">
     <button type="submit" name="add-to-cart" value="<?php echo $pid; ?>">Add</button>
 </form>
+<!-- Remap variationsArr external IDs to WC variation IDs -->
+<script>
+(function() {
+    var wcVarMap = <?php echo json_encode($wc_variation_map); ?>;
+    // Wait for variationsArr to be defined, then remap
+    var _checkRemap = setInterval(function() {
+        if (typeof variationsArr !== 'undefined') {
+            clearInterval(_checkRemap);
+            for (var i = 0; i < variationsArr.length; i++) {
+                var wcId = wcVarMap[variationsArr[i].names];
+                if (wcId) {
+                    variationsArr[i].wcVariationId = wcId;
+                    variationsArr[i].variationId = String(wcId);
+                }
+            }
+            console.log('[ortowp] Remapped', variationsArr.length, 'variation IDs to WC IDs');
+        }
+    }, 100);
+    // Safety: clear after 5s
+    setTimeout(function() { clearInterval(_checkRemap); }, 5000);
+})();
+</script>
 
 
 	<main class="main">
@@ -1166,7 +1209,7 @@ $pid = (is_object($product) && method_exists($product, 'get_id')) ? $product->ge
       }
       //find correct variation
       let selectedVariation = variationsArr.find(vr => vr.ids.sort().join(',') === selectedOptionIdsList.map(sO => sO).sort().join(','));
-      if(!!selectedVariation && selectedVariation.hide === false && selectedVariation.disable === false){
+      if(!!selectedVariation && selectedVariation.hide !== true && selectedVariation.disable !== true){
         inStock = true;
       }
       return inStock;
@@ -2714,7 +2757,7 @@ $pid = (is_object($product) && method_exists($product, 'get_id')) ? $product->ge
       }
       //find correct variation
       let selectedVariation = variationsArr.find(vr => vr.ids.sort().join(',') === selectedOptionIdsList.map(sO => sO).sort().join(','));
-      if(!!selectedVariation && selectedVariation.hide === false && selectedVariation.disable === false){
+      if(!!selectedVariation && selectedVariation.hide !== true && selectedVariation.disable !== true){
         inStock = true;
       }
       return inStock;
