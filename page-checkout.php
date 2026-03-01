@@ -28,7 +28,7 @@ if (isset($wp->query_vars['order-received'])) {
 <main id="content" class="main">
 <div class="container container--l checkout-container">
     <div class="woocommerce">
-        <div class="container container--xs bg--white wc-checkout-wrap" style="padding-bottom: 2px;">
+        <div class="container container--xs bg--white wc-checkout-wrap" style="padding: 0 40px; padding-bottom: 2px;">
             <div class="woocommerce-order">
                 <p class="woocommerce-notice woocommerce-notice--success" style="background:#dff0d8;border:1px solid #3dbd00;padding:15px;border-radius:8px;color:#333;font-size:16px;margin-bottom:20px;">
                     Hvala. Vaše naročilo je bilo prejeto.
@@ -203,9 +203,9 @@ $delivery_dates = se_get_delivery_dates();
         .phone-helper-row { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-top: 4px; }
 
         /* === Payment Methods (custom visual, not WC native) === */
-        .hs-payment-methods { list-style: none; padding: 0; margin: 0; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
-        .hs-payment-methods li { padding: 14px 16px; border-bottom: 1px solid #e0e0e0; cursor: pointer; transition: background 0.15s; }
-        .hs-payment-methods li:last-child { border-bottom: none; }
+        .hs-payment-methods { list-style: none; padding: 0; margin: 0; border: 1px solid #d1dbe5; border-radius: 5px; overflow: hidden; }
+        .hs-payment-methods li { padding: 1.41575em 1em; border-left: 1px solid #d1dbe5; border-right: 1px solid #d1dbe5; border-bottom: 1px solid #d1dbe5; border-top: 1px solid #d1dbe5; cursor: pointer; transition: background 0.15s; }
+        .hs-payment-methods li:last-child { border-bottom: 1px solid #d1dbe5; } .hs-payment-methods li:first-child { border-top-left-radius: 5px; border-top-right-radius: 5px; } .hs-payment-methods li:last-child { border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
         .hs-payment-methods li.active { background: #fff8f5; }
         .hs-payment-methods li label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; font-size: 14px; font-weight: 500; }
         .hs-payment-methods li .payment-icons { margin-left: auto; display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
@@ -217,12 +217,13 @@ $delivery_dates = se_get_delivery_dates();
 
         /* === Delivery Type Buttons === */
         .hs-delivery-type-container .container__title { font-weight: 700; font-size: 16px; margin-bottom: 8px; margin-top: 5px; }
-        h3.payment-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
-        #custom_shipping h3 { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
-        h3.place-order-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
+        .checkout-billing-title { color: #232f3e; font-size: 24px; margin-bottom: 12px; }
+        h3.payment-title { font-size: 16px; font-weight: 700; margin: 20px 0 10px; }
+        #custom_shipping h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
+        h3.place-order-title { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
         .form-row { margin-bottom: 12px !important; }
         .phone-helper-row { margin-top: 2px !important; margin-bottom: 0 !important; }
-        .hs-delivery-type-container .container__buttons { display: flex; gap: 10px; }
+        .hs-delivery-type-container .container__buttons { display: flex; gap: 8px; }
         .hs-delivery-type-container .delivery-type {
             flex: 1 !important; border: 2px solid #e0e0e0 !important; border-radius: 8px !important;
             padding: 12px 14px !important; cursor: pointer !important; transition: all 0.2s !important; background: #fff !important;
@@ -236,7 +237,7 @@ $delivery_dates = se_get_delivery_dates();
         /* === Shipping date box === */
         .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
         .shipping_method_custom li { border: 1px solid #ccc !important; border-radius: 5px; padding: 0; background: #fff; display: block !important; overflow: hidden; margin-bottom: 3px; }
-        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; padding: 12px 15px; background: #fff5ee; border: 2px solid #ff5b00; border-radius: 5px; }
+        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; padding: 1.41575em 1em; background: #fff5ee; border: 1px solid #ff5b00; border-radius: 5px; }
         .shipping_method_custom .outer-wrapper { display: flex !important; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; }
         .shipping_method_custom .hs-custom-date { white-space: nowrap; }
         .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -254,15 +255,16 @@ $delivery_dates = se_get_delivery_dates();
 
         /* === COD prompt === */
         .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 12px; padding: 10px 0; margin: 5px 0; }
+        #custom_shipping { margin-top: 15px; }
         .hs-cod-checkout-prompt .cod-prompt-text { font-size: 14px; flex: 1; }
         .hs-cod-checkout-prompt .cod-prompt-image { width: 40px; height: auto; }
 
         /* === VAT text === */
-        .hs-vat-tax-prompt { text-align: right; font-size: 12px; color: #666; margin: 4px 0 10px; line-height: 1.5; }
+        .hs-vat-tax-prompt { text-align: right; font-size: 12px; color: #666; margin: 4px 0 10px; line-height: 1.8; }
 
         /* === Order summary === */
         .checkout-order-summary h3 { font-size: 18px; font-weight: bold; margin: 20px 0 10px; }
-        .review-section-container { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; background: #fafafa; }
+        .review-section-container { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgb(240, 242, 245); font-size: 14px; background: transparent; }
         .review-product-details { flex: 1; }
         .review-product-details .f--m { font-size: 13px; }
         .review-product-details .c--gray { color: #888; font-size: 12px; }
@@ -276,7 +278,7 @@ $delivery_dates = se_get_delivery_dates();
         .checkout-warranty__text { font-size: 13px; line-height: 1.4; }
 
         /* === Terms & marketing === */
-        .agreed_terms_txt { font-size: 13px; color: #555; margin: 10px 0; line-height: 1.5; }
+        .agreed_terms_txt { font-size: 13px; color: #555; margin: 10px 0; line-height: 1.5; position: relative; top: 15px; }
         .agreed_terms_txt a { color: #ff5b00; text-decoration: underline; }
         .terms-checkbox-and-links { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; }
         .terms-checkbox-and-links .checkbox { flex-shrink: 0; }
@@ -289,7 +291,7 @@ $delivery_dates = se_get_delivery_dates();
 
         /* === Warehouse badge === */
         .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 5px 0; }
-        .delivery-from-eu-warehouse { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
+        .delivery-from-eu-warehouse { display: flex; align-items: center; gap: 8px; margin-top: 15px !important; font-size: 14px; }
         .delivery-from-eu-warehouse__icon { height: 18px; width: auto; }
 
         /* Override custom-checkout-si.css float layout for address fields */
@@ -396,7 +398,7 @@ $delivery_dates = se_get_delivery_dates();
         /* Page layout: gray bg + white card */
         body { background: rgb(240, 242, 245) !important; }
         .checkout-container { max-width: 40rem !important; margin: 0 auto !important; padding: 0 !important; }
-        .wc-checkout-wrap { background: rgb(240, 242, 245) !important; border-radius: 5px 5px 0 0; padding: 0 !important; max-width: 100% !important; box-shadow: none; margin-top: 15px !important; }
+        .wc-checkout-wrap { background: rgb(240, 242, 245) !important; border-radius: 5px 5px 0 0; padding: 0 !important; padding-bottom: 15px !important; max-width: 100% !important; box-shadow: none; margin-top: 15px !important; }
         @media (max-width: 767px) {
             .wc-checkout-wrap { padding: 0 !important; }
         }
@@ -429,7 +431,7 @@ $delivery_dates = se_get_delivery_dates();
                         <?php do_action('woocommerce_before_checkout_form', $checkout); ?>
 
                         <form name="checkout" method="post" class="checkout woocommerce-checkout"
-                              action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="Zaključek nakupa" style="padding: 0 40px;">
+                              action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="Zaključek nakupa" style="padding: 0 40px; padding-bottom: 48px;">
 
                             <div class="col2-set" id="customer_details">
                                 <div class="col-1 clearfix">
@@ -685,7 +687,7 @@ $delivery_dates = se_get_delivery_dates();
                                         </div>
                                     </div>
                                 </div>
-                                <div class="vigo-checkout-total__sum" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 5px;font-size:17px;">
+                                <div class="vigo-checkout-total__sum" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 5px;font-size:17px;border-top:1px solid rgb(240,242,245);">
                                     <div>Skupni znesek: <strong><?php echo $cart_total; ?></strong></div>
                                 </div>
                             </div>
