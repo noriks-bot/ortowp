@@ -121,12 +121,6 @@ add_filter('gettext', function($translated, $text, $domain) {
     return $translated;
 }, 10, 3);
 
-// Validate terms checkbox on checkout
-add_action('woocommerce_checkout_process', function() {
-    if (empty($_POST['terms'])) {
-        wc_add_notice('Prosimo, potrdite, da se strinjate s splošnimi pogoji poslovanja.', 'error');
-    }
-});
 
 // Save marketing consent to order meta
 add_action('woocommerce_checkout_update_order_meta', function($order_id) {
@@ -134,3 +128,6 @@ add_action('woocommerce_checkout_update_order_meta', function($order_id) {
         update_post_meta($order_id, '_marketing_consent', 'yes');
     }
 });
+
+// Disable WC built-in terms requirement
+add_filter('woocommerce_checkout_show_terms', '__return_false');
