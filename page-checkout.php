@@ -306,16 +306,7 @@ $delivery_dates = se_get_delivery_dates();
             float: right !important;
             width: 63% !important;
         }
-        @media (max-width: 767px) {
-            p#billing_address_1_field,
-            p#billing_address_2_field,
-            p#billing_postcode_field,
-            p#billing_city_field {
-                float: none !important;
-                width: 100% !important;
-                margin-right: 0 !important;
-            }
-        }
+        /* Address fields always side by side (matches original) */
 
         /* Ime + Priimek side by side */
         p#billing_first_name_field {
@@ -329,14 +320,7 @@ $delivery_dates = se_get_delivery_dates();
             width: 49% !important;
             clear: none !important;
         }
-        @media (max-width: 767px) {
-            p#billing_first_name_field,
-            p#billing_last_name_field {
-                float: none !important;
-                width: 100% !important;
-                margin-right: 0 !important;
-            }
-        }
+        /* Ime/Priimek always side by side (matches original) */
 
         /* Match original si.stepease.eu input styling */
         .woocommerce-billing-fields__field-wrapper input.input-text,
@@ -396,6 +380,14 @@ $delivery_dates = se_get_delivery_dates();
         }
         .delivery-info-logo { height: 28px; }
 
+        }
+
+        /* Page layout: gray bg + white card */
+        body { background: #f0f0f0 !important; }
+        .checkout-container { max-width: 700px !important; margin: 0 auto !important; padding: 0 !important; }
+        .wc-checkout-wrap { background: #fff; border-radius: 0; padding: 25px 30px !important; max-width: 100% !important; box-shadow: none; }
+        @media (max-width: 767px) {
+            .wc-checkout-wrap { padding: 20px 15px !important; }
         }
 
         /* === FIX 3: PayPal badge same green as others === */
