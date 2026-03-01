@@ -216,14 +216,21 @@ $delivery_dates = se_get_delivery_dates();
         .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
 
         /* === Delivery Type Buttons === */
-        .hs-delivery-type-container .container__title { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+        .hs-delivery-type-container .container__title { font-weight: 700; font-size: 16px; margin-bottom: 8px; margin-top: 5px; }
+        h3.payment-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
+        #custom_shipping h3 { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
+        h3.place-order-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
+        .form-row { margin-bottom: 6px !important; }
+        .phone-helper-row { margin-top: 2px !important; margin-bottom: 0 !important; }
         .hs-delivery-type-container .container__buttons { display: flex; gap: 10px; }
         .hs-delivery-type-container .delivery-type {
-            flex: 1; border: 2px solid #e0e0e0; border-radius: 8px;
-            padding: 15px 10px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fff;
+            flex: 1 !important; border: 2px solid #e0e0e0 !important; border-radius: 8px !important;
+            padding: 12px 14px !important; cursor: pointer !important; transition: all 0.2s !important; background: #fff !important;
+            display: flex !important; flex-direction: row !important; align-items: center !important; gap: 10px !important;
+            text-align: left !important;
         }
         .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00; background: #fff8f5; }
-        .hs-delivery-type-container .delivery-type img { max-width: 50px; height: auto; margin: 0 auto 8px; display: block; }
+        .hs-delivery-type-container .delivery-type img { width: 44px; height: auto; flex-shrink: 0; }
         .hs-delivery-type-container .delivery-type p { margin: 0; font-size: 13px; font-weight: 500; }
 
         /* === Shipping date box === */
@@ -240,31 +247,31 @@ $delivery_dates = se_get_delivery_dates();
         .shipping_method_custom .checkedlabel svg { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; flex-shrink: 0; fill: #3DBD00 !important; }
 
         /* === Paketomat dropdown === */
-        .paketomat-fields select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-top: 5px; background: #fff; }
-        .paketomat-fields .paketomat-title { font-weight: bold; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px; }
-        .paketomat-provider-icons { display: flex; gap: 8px; margin-top: 8px; }
+        .paketomat-fields select { width: 100%; margin-top: 5px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%23666" stroke-width="1.5" fill="none"/></svg>') no-repeat right 14px center; -webkit-appearance: none; appearance: none; }
+        .paketomat-fields .paketomat-title { display: none; }
+        .paketomat-provider-icons { display: none !important; }
         .paketomat-provider-icons img { height: 20px; }
 
         /* === COD prompt === */
-        .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 12px; padding: 12px 0; margin: 10px 0; border-top: 1px solid #eee; }
+        .hs-cod-checkout-prompt { display: flex; align-items: center; gap: 12px; padding: 10px 0; margin: 5px 0; }
         .hs-cod-checkout-prompt .cod-prompt-text { font-size: 14px; flex: 1; }
         .hs-cod-checkout-prompt .cod-prompt-image { width: 40px; height: auto; }
 
         /* === VAT text === */
-        .hs-vat-tax-prompt { text-align: right; font-size: 12px; color: #666; margin: 8px 0 15px; line-height: 1.5; }
+        .hs-vat-tax-prompt { text-align: right; font-size: 12px; color: #666; margin: 4px 0 10px; line-height: 1.5; }
 
         /* === Order summary === */
         .checkout-order-summary h3 { font-size: 18px; font-weight: bold; margin: 20px 0 10px; }
-        .review-section-container { display: flex; align-items: flex-start; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .review-section-container { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; background: #fafafa; }
         .review-product-details { flex: 1; }
         .review-product-details .f--m { font-size: 13px; }
         .review-product-details .c--gray { color: #888; font-size: 12px; }
         .info-price, .review-addons-price { font-weight: bold; white-space: nowrap; }
-        .review-total-row { display: flex; justify-content: space-between; padding: 12px 0 5px; font-size: 16px; }
+        .review-total-row { display: flex; justify-content: space-between; padding: 12px 0 5px; font-size: 17px; }
         .review-total-row strong { font-size: 18px; }
 
         /* === Warranty badge === */
-        .checkout-warranty { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 15px 0; margin: 10px 0; }
+        .checkout-warranty { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 0; margin: 5px 0; }
         .checkout-warranty__icon img { width: 55px; height: auto; }
         .checkout-warranty__text { font-size: 13px; line-height: 1.4; }
 
@@ -281,7 +288,9 @@ $delivery_dates = se_get_delivery_dates();
         .address-hint { font-size: 13px; color: #666; margin-bottom: 5px; }
 
         /* === Warehouse badge === */
-        .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; }
+        .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 5px 0; }
+        .delivery-from-eu-warehouse { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
+        .delivery-from-eu-warehouse__icon { height: 18px; width: auto; }
 
         /* Override custom-checkout-si.css float layout for address fields */
         p#billing_address_1_field {
@@ -324,14 +333,16 @@ $delivery_dates = se_get_delivery_dates();
 
         /* Match original si.stepease.eu input styling */
         .woocommerce-billing-fields__field-wrapper input.input-text,
-        .woocommerce-billing-fields__field-wrapper input.form-input {
+        .woocommerce-billing-fields__field-wrapper input.form-input,
+        .paketomat-fields select {
             background-color: #fff !important;
-            box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,0.25) !important;
-            min-height: 60px !important;
-            border: 1.5px solid #c9c9c9 !important;
-            border-radius: 4px !important;
-            font-size: 18px !important;
+            box-shadow: none !important;
+            min-height: 50px !important;
+            border: 1px solid #d0d0d0 !important;
+            border-radius: 6px !important;
+            font-size: 16px !important;
             box-sizing: border-box !important;
+            padding: 12px 14px !important;
         }
         .woocommerce-billing-fields__field-wrapper .field--not-empty input {
             padding-bottom: 0 !important;
@@ -449,12 +460,12 @@ $delivery_dates = se_get_delivery_dates();
                                                     <div class="container__title">Način dostave</div>
                                                     <div class="container__buttons">
                                                         <div class="delivery-type hs-delivery-home active" data-type="home">
+                                                            <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/home_SL_alt.svg" style="width:44px;">
                                                             <p>Dostava na dom</p>
-                                                            <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/home_SL_alt.svg" style="align-self:center;padding-top:20px;min-width:50px;">
                                                         </div>
                                                         <div class="delivery-type hs-delivery-machine" data-type="paketomat">
+                                                            <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/parcel_machine_SL_alt.svg" style="width:44px;">
                                                             <p>Paketomat / Petrol / MOL</p>
-                                                            <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/parcel_machine_SL_alt.svg">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -674,10 +685,8 @@ $delivery_dates = se_get_delivery_dates();
                                         </div>
                                     </div>
                                 </div>
-                                <div class="vigo-checkout-total__sum flex flex--middle border_price">
-                                    <div class="flex__item f--l">
-                                        Skupni znesek: <span class="f--bold price_total_wrapper"><?php echo $cart_total; ?></span>
-                                    </div>
+                                <div class="vigo-checkout-total__sum" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 5px;font-size:17px;">
+                                    <div>Skupni znesek: <strong><?php echo $cart_total; ?></strong></div>
                                 </div>
                             </div>
 
