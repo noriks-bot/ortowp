@@ -28,7 +28,7 @@ if (isset($wp->query_vars['order-received'])) {
 <main id="content" class="main">
 <div class="container container--l checkout-container">
     <div class="woocommerce">
-        <div class="container container--xs bg--white wc-checkout-wrap" style="padding:40px 20px;">
+        <div class="container container--xs bg--white wc-checkout-wrap" style="padding-bottom: 2px;">
             <div class="woocommerce-order">
                 <p class="woocommerce-notice woocommerce-notice--success" style="background:#dff0d8;border:1px solid #3dbd00;padding:15px;border-radius:8px;color:#333;font-size:16px;margin-bottom:20px;">
                     Hvala. Vaše naročilo je bilo prejeto.
@@ -220,7 +220,7 @@ $delivery_dates = se_get_delivery_dates();
         h3.payment-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
         #custom_shipping h3 { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
         h3.place-order-title { font-size: 16px; font-weight: 700; margin: 15px 0 8px; }
-        .form-row { margin-bottom: 6px !important; }
+        .form-row { margin-bottom: 12px !important; }
         .phone-helper-row { margin-top: 2px !important; margin-bottom: 0 !important; }
         .hs-delivery-type-container .container__buttons { display: flex; gap: 10px; }
         .hs-delivery-type-container .delivery-type {
@@ -229,22 +229,22 @@ $delivery_dates = se_get_delivery_dates();
             display: flex !important; flex-direction: row !important; align-items: center !important; gap: 10px !important;
             text-align: left !important;
         }
-        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00; background: #fff8f5; }
+        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00 !important; background: #fff5ee !important; outline: 2px solid #ff5b00 !important; outline-offset: -2px; }
         .hs-delivery-type-container .delivery-type img { width: 44px; height: auto; flex-shrink: 0; }
         .hs-delivery-type-container .delivery-type p { margin: 0; font-size: 13px; font-weight: 500; }
 
         /* === Shipping date box === */
         .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
-        .shipping_method_custom li { border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px; background: #fff8f5; display: block !important; }
-        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; }
+        .shipping_method_custom li { border: 1px solid #ccc !important; border-radius: 5px; padding: 0; background: #fff; display: block !important; overflow: hidden; margin-bottom: 3px; }
+        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; padding: 12px 15px; background: #fff5ee; border: 2px solid #ff5b00; border-radius: 5px; }
         .shipping_method_custom .outer-wrapper { display: flex !important; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; }
         .shipping_method_custom .hs-custom-date { white-space: nowrap; }
         .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .shipping_method_custom .hs-custom-date { color: #333; font-size: 14px; }
         .shipping_method_custom .inner-wrapper-img { display: flex; align-items: center; gap: 8px; }
-        .shipping_method_custom .tag--green { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .shipping_method_custom .tag--green { background: #ff5b00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .shipping_method_custom .delivery_img img { height: 22px; }
-        .shipping_method_custom .checkedlabel svg { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; flex-shrink: 0; fill: #3DBD00 !important; }
+        .shipping_method_custom .checkedlabel svg { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; flex-shrink: 0; fill: #ff5b00 !important; }
 
         /* === Paketomat dropdown === */
         .paketomat-fields select { width: 100%; margin-top: 5px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%23666" stroke-width="1.5" fill="none"/></svg>') no-repeat right 14px center; -webkit-appearance: none; appearance: none; }
@@ -394,11 +394,11 @@ $delivery_dates = se_get_delivery_dates();
         }
 
         /* Page layout: gray bg + white card */
-        body { background: #f0f0f0 !important; }
-        .checkout-container { max-width: 560px !important; margin: 0 auto !important; padding: 0 !important; }
-        .wc-checkout-wrap { background: #fff; border-radius: 0; padding: 25px 30px !important; max-width: 100% !important; box-shadow: none; }
+        body { background: rgb(240, 242, 245) !important; }
+        .checkout-container { max-width: 40rem !important; margin: 0 auto !important; padding: 0 !important; }
+        .wc-checkout-wrap { background: rgb(240, 242, 245) !important; border-radius: 5px 5px 0 0; padding: 0 !important; max-width: 100% !important; box-shadow: none; margin-top: 15px !important; }
         @media (max-width: 767px) {
-            .wc-checkout-wrap { padding: 20px 15px !important; }
+            .wc-checkout-wrap { padding: 0 !important; }
         }
 
         /* === FIX 3: PayPal badge same green as others === */
@@ -429,7 +429,7 @@ $delivery_dates = se_get_delivery_dates();
                         <?php do_action('woocommerce_before_checkout_form', $checkout); ?>
 
                         <form name="checkout" method="post" class="checkout woocommerce-checkout"
-                              action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="Zaključek nakupa">
+                              action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data" aria-label="Zaključek nakupa" style="padding: 0 40px;">
 
                             <div class="col2-set" id="customer_details">
                                 <div class="col-1 clearfix">
