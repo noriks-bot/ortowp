@@ -123,7 +123,7 @@ add_filter('gettext', function($translated, $text, $domain) {
 
 // Validate terms checkbox on checkout
 add_action('woocommerce_checkout_process', function() {
-    if (empty($_POST['terms_accepted'])) {
+    if (empty($_POST['terms'])) {
         wc_add_notice('Prosimo, potrdite, da se strinjate s splošnimi pogoji poslovanja.', 'error');
     }
 });
