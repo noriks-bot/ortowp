@@ -395,7 +395,7 @@ $delivery_dates = se_get_delivery_dates();
 
         /* Page layout: gray bg + white card */
         body { background: #f0f0f0 !important; }
-        .checkout-container { max-width: 700px !important; margin: 0 auto !important; padding: 0 !important; }
+        .checkout-container { max-width: 520px !important; margin: 0 auto !important; padding: 0 !important; }
         .wc-checkout-wrap { background: #fff; border-radius: 0; padding: 25px 30px !important; max-width: 100% !important; box-shadow: none; }
         @media (max-width: 767px) {
             .wc-checkout-wrap { padding: 20px 15px !important; }
