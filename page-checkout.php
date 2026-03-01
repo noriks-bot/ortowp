@@ -159,24 +159,24 @@ $delivery_dates = se_get_delivery_dates();
         body #order_review #place_order,
         #place_order {
             width: 100% !important;
-            padding: 18px 30px !important;
-            font-size: 18px !important;
+            padding: 19px 40px !important;
+            font-size: 20px !important;
             font-weight: 700 !important;
             border: none !important;
-            border-radius: 8px !important;
+            border-radius: 4px !important;
             cursor: pointer !important;
-            background: linear-gradient(135deg, #ff5b00, #e04e00) !important;
+            background: #ff5b00 !important;
             background-color: #ff5b00 !important;
             color: #fff !important;
             margin-top: 15px !important;
-            box-shadow: 0 3px 0 #c04000, 0 4px 12px rgba(255,91,0,0.3) !important;
+            box-shadow: rgb(255, 91, 0) 0px 2px 0px 0px !important;
             line-height: 1.4 !important;
             display: block !important;
             text-align: center !important;
         }
         body.woocommerce-checkout #place_order:hover,
         #place_order:hover {
-            background: linear-gradient(135deg, #e04e00, #c94500) !important;
+            background: #e04e00 !important;
         }
 
         /* Delivery toggle: home vs paketomat */
@@ -237,7 +237,7 @@ $delivery_dates = se_get_delivery_dates();
         /* === Shipping date box === */
         .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
         .shipping_method_custom li { border: 1px solid #ccc !important; border-radius: 5px; padding: 0; background: #fff; display: block !important; overflow: hidden; margin-bottom: 3px; }
-        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; padding: 1.41575em 1em; background: #fff5ee; border: 1px solid #ff5b00; border-radius: 5px; }
+        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; padding: 15px; background: #fff5ee; border: 1px solid #ff5b00; border-radius: 5px; }
         .shipping_method_custom .outer-wrapper { display: flex !important; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; }
         .shipping_method_custom .hs-custom-date { white-space: nowrap; }
         .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -398,9 +398,9 @@ $delivery_dates = se_get_delivery_dates();
         /* Page layout: gray bg + white card */
         body { background: rgb(240, 242, 245) !important; }
         .checkout-container { max-width: 40rem !important; margin: 0 auto !important; padding: 0 !important; }
-        .wc-checkout-wrap { background: rgb(240, 242, 245) !important; border-radius: 5px 5px 0 0; padding: 0 !important; padding-bottom: 15px !important; max-width: 100% !important; box-shadow: none; margin-top: 15px !important; }
+        .wc-checkout-wrap { background: #fff !important; border-radius: 10px !important; padding: 18px 0 15px 0 !important; max-width: 100% !important; box-shadow: none; margin: 30px auto !important; }
         @media (max-width: 767px) {
-            .wc-checkout-wrap { padding: 0 !important; }
+            .wc-checkout-wrap { padding: 18px 0 15px 0 !important; margin: 15px auto !important; border-radius: 10px !important; }
         }
 
         /* === FIX 3: PayPal badge same green as others === */
