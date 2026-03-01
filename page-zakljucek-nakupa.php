@@ -200,7 +200,7 @@ $delivery_dates = se_get_delivery_dates();
         body.delivery-paketomat #billing_city_field { display: none !important; }
 
         /* Phone helper row */
-        .phone-helper-row { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-top: 4px; }
+        .phone-helper-row { display: flex; justify-content: space-between; font-size: 16px; color: #919293; margin-top: 4px; }
 
         /* === Payment Methods (custom visual, not WC native) === */
         .hs-payment-methods { list-style: none; padding: 0; margin: 0; border: 1px solid #d1dbe5; border-radius: 5px; overflow: hidden; }
@@ -212,7 +212,7 @@ $delivery_dates = se_get_delivery_dates();
         .hs-payment-methods li .payment-icons img { height: 24px; width: auto; }
         .hs-payment-methods li input[type="radio"] { accent-color: #ff5b00; width: 18px; height: 18px; flex-shrink: 0; }
         .hs-payment-methods .payment-fee-free { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; }
-        .hs-payment-methods .payment-unavailable { font-size: 12px; color: #999; padding: 6px 0 0 28px; display: none; }
+        .hs-payment-methods .payment-unavailable { font-size: 16px; color: #919293; padding: 6px 0 0 28px; display: none; }
         .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
 
         /* === Delivery Type Buttons === */
@@ -253,7 +253,8 @@ $delivery_dates = se_get_delivery_dates();
         .paketomat-fields.active .paketomat-title { display: none !important; }
         .paketomat-provider-icons { display: none; }
         .paketomat-provider-icons { display: none; }
-        .paketomat-fields.active .paketomat-provider-icons { display: flex !important; gap: 8px; margin-top: 8px; }
+        /* provider icons hidden - they render in wrong position */
+        .paketomat-provider-icons { display: none !important; }
         .paketomat-provider-icons img { height: 20px !important; }
         .paketomat-provider-icons img { height: 20px; }
 
