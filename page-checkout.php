@@ -662,7 +662,7 @@ $delivery_dates = se_get_delivery_dates();
                                     <span class="policy-agreement-obligation">S klikom na gumb <strong>Oddaj naročilo</strong> se strinjam z oddajo naročila z obveznostjo plačila.</span> <br>
                                     <div class="terms-checkbox-and-links">
                                         <label class="checkbox">
-                                            <input type="checkbox" class="input-checkbox" name="terms_accepted" id="terms_accepted" value="1">
+                                            <input type="checkbox" class="input-checkbox" name="terms" id="terms" value="1">
                                         </label>
                                         Prebral sem in sprejemam <a href="https://ortowp.noriks.com/splosni-pogoji-poslovanja/" target="_blank">Splošne pogoje poslovanja</a> in <a href="https://ortowp.noriks.com/pravica-do-odstopa-od-nakupa/" target="_blank">Pravico do odstopa od nakupa</a>.
                                     </div>
