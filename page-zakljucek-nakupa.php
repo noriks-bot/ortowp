@@ -398,9 +398,12 @@ $delivery_dates = se_get_delivery_dates();
         /* Page layout: gray bg + white card */
         body { background: rgb(240, 242, 245) !important; }
         .checkout-container { max-width: 40rem !important; margin: 0 auto !important; padding: 0 !important; }
-        .wc-checkout-wrap { background: #fff !important; border-radius: 10px !important; padding: 18px 0 15px 0 !important; max-width: 100% !important; box-shadow: none; margin: 30px auto !important; }
+        @media (min-width: 768px) { body.woocommerce-checkout { background: #f0f2f5 !important; } .wc-checkout-wrap { background: #fff !important; border-radius: 10px !important; padding: 30px 40px 48px !important; margin: 30px auto !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08); } }
+        .wc-checkout-wrap { background: #fff !important; border-radius: 10px !important; max-width: 100% !important; margin: 30px auto !important; }
+        @media (min-width: 768px) { .wc-checkout-wrap { padding: 30px 40px 48px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08); } }
         @media (max-width: 767px) {
             .wc-checkout-wrap { padding: 18px 0 15px 0 !important; margin: 15px auto !important; border-radius: 10px !important; }
+            form.checkout { padding: 0 20px !important; padding-bottom: 48px !important; }
         }
 
         /* === FIX 3: PayPal badge same green as others === */
