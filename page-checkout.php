@@ -394,12 +394,6 @@ $delivery_dates = se_get_delivery_dates();
         }
         .delivery-info-logo { height: 28px; }
 
-        /* === FIX 2: Two-column desktop layout === */
-        @media (min-width: 992px) {
-            .wc-checkout-wrap, .wc-checkout-wrap.container--xs, .before_form.container--xs { max-width: 1100px !important; padding: 30px !important; }
-            .checkout.woocommerce-checkout { display: flex; flex-wrap: wrap; gap: 30px; }
-            .checkout.woocommerce-checkout > .col2-set { flex: 1 1 58%; min-width: 0; }
-            .checkout.woocommerce-checkout > .checkout-right-column { flex: 0 0 340px; }
         }
 
         /* === FIX 3: PayPal badge same green as others === */
@@ -584,8 +578,8 @@ $delivery_dates = se_get_delivery_dates();
                             <!-- Hidden shipping method for WC -->
                             <input type="hidden" name="shipping_method[0]" value="free_shipping:1" />
 
-                            <!-- RIGHT COLUMN: shipping, payment, summary, place order -->
-                            <div class="checkout-right-column">
+                            
+                            
 
                             <!-- Fallback payment method (ensures COD is always submitted even if WC radios don't render) -->
                             <input type="hidden" name="payment_method" id="payment_method_fallback" value="cod" />
@@ -747,7 +741,7 @@ $delivery_dates = se_get_delivery_dates();
                                 </div>
                             </div>
 
-                            </div><!-- /.checkout-right-column -->
+                            
                         </form>
                     </div>
                 </div>
