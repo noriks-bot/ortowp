@@ -248,9 +248,13 @@ $delivery_dates = se_get_delivery_dates();
         .shipping_method_custom .checkedlabel svg { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; flex-shrink: 0; fill: #ff5b00 !important; }
 
         /* === Paketomat dropdown === */
-        .paketomat-fields select { width: 100%; margin-top: 5px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%23666" stroke-width="1.5" fill="none"/></svg>') no-repeat right 14px center; -webkit-appearance: none; appearance: none; }
+        .paketomat-fields select { width: 100%; margin-top: 0px; height: 50px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.3px; border: 1.5px solid #c9c9c9; border-radius: 4px; padding: 0 14px; color: #666; box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,0.15); background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%23666" stroke-width="1.5" fill="none"/></svg>') no-repeat right 14px center; -webkit-appearance: none; appearance: none; }
         .paketomat-fields .paketomat-title { display: none; }
-        .paketomat-provider-icons { display: none !important; }
+        .paketomat-fields.active .paketomat-title { display: none !important; }
+        .paketomat-provider-icons { display: none; }
+        .paketomat-provider-icons { display: none; }
+        .paketomat-fields.active .paketomat-provider-icons { display: flex !important; gap: 8px; margin-top: 8px; }
+        .paketomat-provider-icons img { height: 20px !important; }
         .paketomat-provider-icons img { height: 20px; }
 
         /* === COD prompt === */
@@ -827,6 +831,14 @@ $delivery_dates = se_get_delivery_dates();
 <script>
 jQuery(function($) {
     // Delivery type toggle
+    // Move paketomat select into correct container
+    var $pakLocField = $('#paketomat_location_field');
+    if ($pakLocField.length && $('#paketomat-fields').length) {
+        var $icons = $('#paketomat-fields .paketomat-provider-icons');
+        if ($icons.length) $pakLocField.insertBefore($icons);
+        else $pakLocField.appendTo('#paketomat-fields');
+    }
+
     var $homeBtn = $('.hs-delivery-home');
     var $machineBtn = $('.hs-delivery-machine');
     var $homeFields = $('#home-delivery-fields');
