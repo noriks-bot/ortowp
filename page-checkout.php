@@ -333,16 +333,16 @@ $delivery_dates = se_get_delivery_dates();
 
         /* Match original si.stepease.eu input styling */
         .woocommerce-billing-fields__field-wrapper input.input-text,
-        .woocommerce-billing-fields__field-wrapper input.form-input,
-        .paketomat-fields select {
+        .woocommerce-billing-fields__field-wrapper input.form-input {
             background-color: #fff !important;
-            box-shadow: none !important;
-            min-height: 50px !important;
-            border: 1px solid #d0d0d0 !important;
-            border-radius: 6px !important;
-            font-size: 16px !important;
+            box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,0.25) !important;
+            min-height: 60px !important;
+            border: 1.5px solid #c9c9c9 !important;
+            border-radius: 4px !important;
+            font-size: 18px !important;
             box-sizing: border-box !important;
-            padding: 12px 14px !important;
+            padding: .4761904762em 1em !important;
+            width: 100% !important;
         }
         .woocommerce-billing-fields__field-wrapper .field--not-empty input {
             padding-bottom: 0 !important;
