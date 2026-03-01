@@ -182,8 +182,12 @@ $delivery_dates = se_get_delivery_dates();
         /* Delivery toggle: home vs paketomat */
         .home-delivery-fields { display: block; }
         .home-delivery-fields.hidden { display: none; }
-        .paketomat-fields { display: none; }
-        .paketomat-fields.active { display: block; }
+        .paketomat-fields,
+        div.paketomat-fields,
+        #paketomat-fields { display: none !important; }
+        .paketomat-fields.active,
+        div.paketomat-fields.active,
+        #paketomat-fields.active { display: block !important; }
         /* Hide ALL address fields when paketomat is active (including WC-regenerated ones) */
         body.delivery-paketomat #home-delivery-fields,
         body.delivery-paketomat .address-hint,
@@ -274,14 +278,59 @@ $delivery_dates = se_get_delivery_dates();
         /* === Warehouse badge === */
         .warehouse-badge { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 8px 0; }
 
-        /* Override custom-checkout-si.css float layout — we use full-width fields */
-        p#billing_address_1_field,
-        p#billing_address_2_field,
-        p#billing_postcode_field,
-        p#billing_city_field {
+        /* Override custom-checkout-si.css float layout for address fields */
+        p#billing_address_1_field {
             clear: both !important;
-            float: none !important;
-            width: 100% !important;
+            float: left !important;
+            width: 63% !important;
+            margin-right: 2% !important;
+        }
+        p#billing_address_2_field {
+            clear: none !important;
+            float: right !important;
+            width: 35% !important;
+        }
+        p#billing_postcode_field {
+            clear: both !important;
+            float: left !important;
+            width: 35% !important;
+            margin-right: 2% !important;
+        }
+        p#billing_city_field {
+            clear: none !important;
+            float: right !important;
+            width: 63% !important;
+        }
+        @media (max-width: 767px) {
+            p#billing_address_1_field,
+            p#billing_address_2_field,
+            p#billing_postcode_field,
+            p#billing_city_field {
+                float: none !important;
+                width: 100% !important;
+                margin-right: 0 !important;
+            }
+        }
+
+        /* Ime + Priimek side by side */
+        p#billing_first_name_field {
+            float: left !important;
+            width: 49% !important;
+            margin-right: 2% !important;
+            clear: none !important;
+        }
+        p#billing_last_name_field {
+            float: right !important;
+            width: 49% !important;
+            clear: none !important;
+        }
+        @media (max-width: 767px) {
+            p#billing_first_name_field,
+            p#billing_last_name_field {
+                float: none !important;
+                width: 100% !important;
+                margin-right: 0 !important;
+            }
         }
 
         /* Match original si.stepease.eu input styling */
