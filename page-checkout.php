@@ -216,11 +216,11 @@ $delivery_dates = se_get_delivery_dates();
         .hs-payment-methods li.show-unavailable .payment-unavailable { display: block; }
 
         /* === Delivery Type Buttons === */
-        .hs-delivery-type-container .container__title { font-weight: 700; font-size: 16px; margin-bottom: 8px; margin-top: 5px; }
-        .checkout-billing-title { color: #232f3e; font-size: 24px; margin-bottom: 12px; }
-        h3.payment-title { font-size: 16px; font-weight: 700; margin: 20px 0 10px; }
-        #custom_shipping h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
-        h3.place-order-title { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
+        .hs-delivery-type-container .container__title { font-weight: 700; font-size: 18px; margin-bottom: 10px; margin-top: 15px; }
+        .checkout-billing-title { color: #232f3e; font-size: 24px; margin-bottom: 12px; padding-top: 20px; }
+        h3.payment-title { font-size: 18px; font-weight: 700; margin: 20px 0 10px; }
+        #custom_shipping h3 { font-size: 18px; font-weight: 700; margin: 20px 0 8px; }
+        h3.place-order-title { font-size: 18px; font-weight: 700; margin: 20px 0 8px; }
         .form-row { margin-bottom: 12px !important; }
         .phone-helper-row { margin-top: 2px !important; margin-bottom: 0 !important; }
         .hs-delivery-type-container .container__buttons { display: flex; gap: 8px; }
@@ -230,7 +230,7 @@ $delivery_dates = se_get_delivery_dates();
             display: flex !important; flex-direction: row !important; align-items: center !important; gap: 10px !important;
             text-align: left !important;
         }
-        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00 !important; background: #fff5ee !important; outline: 2px solid #ff5b00 !important; outline-offset: -2px; }
+        .hs-delivery-type-container .delivery-type.active { border-color: #ff5b00 !important; background: #fff5ee !important; outline: none !important; }
         .hs-delivery-type-container .delivery-type img { width: 44px; height: auto; flex-shrink: 0; }
         .hs-delivery-type-container .delivery-type p { margin: 0; font-size: 13px; font-weight: 500; }
 
@@ -278,13 +278,13 @@ $delivery_dates = se_get_delivery_dates();
         .checkout-warranty__text { font-size: 13px; line-height: 1.4; }
 
         /* === Terms & marketing === */
-        .agreed_terms_txt { font-size: 13px; color: #555; margin: 10px 0; line-height: 1.5; position: relative; top: 15px; }
+        .agreed_terms_txt { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.6; position: relative; top: 15px; }
         .agreed_terms_txt a { color: #ff5b00; text-decoration: underline; }
         .terms-checkbox-and-links { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; }
-        .terms-checkbox-and-links .checkbox { flex-shrink: 0; }
+        .terms-checkbox-and-links .checkbox { flex-shrink: 0; } .terms-checkbox-and-links { display: flex !important; align-items: flex-start; gap: 8px; margin-top: 8px; } .terms-checkbox-and-links input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
         #custom_mailing_checkout_field { margin: 8px 0; }
         #custom_mailing_checkout_field label { font-size: 13px; color: #555; display: flex; align-items: flex-start; gap: 8px; }
-        #custom_mailing_checkout_field .optional { color: #999; }
+        #custom_mailing_checkout_field .optional { color: #999; } #custom_mailing_checkout_field input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
 
         /* === Address hint === */
         .address-hint { font-size: 13px; color: #666; margin-bottom: 5px; }
