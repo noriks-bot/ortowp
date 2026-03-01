@@ -228,7 +228,7 @@ $delivery_dates = se_get_delivery_dates();
 
         /* === Shipping date box === */
         .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
-        .shipping_method_custom li { border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px; background: #fff8f5; }
+        .shipping_method_custom li { border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px; background: #fff8f5; display: block !important; }
         .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .shipping_method_custom .hs-custom-date { color: #333; font-size: 14px; }
