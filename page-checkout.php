@@ -229,13 +229,15 @@ $delivery_dates = se_get_delivery_dates();
         /* === Shipping date box === */
         .shipping_method_custom { padding: 0; margin: 10px 0; list-style: none; }
         .shipping_method_custom li { border: 2px solid #ff5b00; border-radius: 8px; padding: 12px 15px; background: #fff8f5; display: block !important; }
-        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .shipping_method_custom .checkedlabel { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; }
+        .shipping_method_custom .outer-wrapper { display: flex !important; align-items: center; justify-content: space-between; width: 100%; white-space: nowrap; }
+        .shipping_method_custom .hs-custom-date { white-space: nowrap; }
         .shipping_method_custom .checkedlabel .outer-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .shipping_method_custom .hs-custom-date { color: #333; font-size: 14px; }
         .shipping_method_custom .inner-wrapper-img { display: flex; align-items: center; gap: 8px; }
         .shipping_method_custom .tag--green { background: #3DBD00; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .shipping_method_custom .delivery_img img { height: 22px; }
-        .shipping_method_custom .checkedlabel svg { width: 20px; height: 20px; flex-shrink: 0; fill: #ff5b00; }
+        .shipping_method_custom .checkedlabel svg { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; flex-shrink: 0; fill: #3DBD00 !important; }
 
         /* === Paketomat dropdown === */
         .paketomat-fields select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-top: 5px; background: #fff; }
@@ -462,23 +464,6 @@ $delivery_dates = se_get_delivery_dates();
                                                             <p>Paketomat / Petrol / MOL</p>
                                                             <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/parcel_machine_SL_alt.svg">
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Delivery info box (orange estimated delivery) -->
-                                            <div class="form-row form-row-wide col-xs-12" id="delivery-info-box-wrapper">
-                                                <div class="hs-delivery-info-box">
-                                                    <div class="delivery-info-left">
-                                                        <svg class="delivery-check-icon" viewBox="0 0 19 14" fill="#3DBD00" width="16" height="12"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.5725 3.40179L8.14482 13.5874C7.5815 14.1375 6.66839 14.1375 6.1056 13.5874L0.422493 8.03956C-0.140831 7.48994-0.140831 6.59748 0.422493 6.04707L1.44121 5.05126C2.00471 4.50094 2.91854 4.50094 3.48132 5.05126L7.12254 8.60835L15.5145 0.412609C16.078-0.137536 16.9909-0.137536 17.5537 0.412609L18.5733 1.40842C19.1424 1.95795 19.1424 2.8505 18.5725 3.40179Z"/></svg>
-                                                        <div class="delivery-info-dates">
-                                                            <span class="delivery-info-label">Predvidena dostava:</span>
-                                                            <strong class="delivery-info-date"><?php echo esc_html($delivery_dates); ?></strong>
-                                                        </div>
-                                                    </div>
-                                                    <div class="delivery-info-right">
-                                                        <span class="delivery-info-free tag tag--green">Brezplačno</span>
-                                                        <img class="delivery-info-logo" src="https://images.vigo-shop.com/general/curriers/posta_slo.png" alt="Pošta Slovenije" />
                                                     </div>
                                                 </div>
                                             </div>
