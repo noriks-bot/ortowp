@@ -360,6 +360,54 @@ $delivery_dates = se_get_delivery_dates();
         #order_review > .woocommerce-checkout-payment { display: block !important; }
         #order_review > .woocommerce-checkout-payment > .place-order { display: block !important; }
 
+        /* === FIX 1: Delivery info box === */
+        .hs-delivery-info-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #fff5ee, #fff0e6);
+            border: 2px solid #ff5b00;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 10px 0 5px;
+        }
+        .delivery-info-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .delivery-check-icon { flex-shrink: 0; }
+        .delivery-info-label { font-size: 13px; color: #666; display: block; }
+        .delivery-info-date { font-size: 15px; color: #222; }
+        .delivery-info-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .delivery-info-free {
+            background: #3dbd00;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .delivery-info-logo { height: 28px; }
+
+        /* === FIX 2: Two-column desktop layout === */
+        @media (min-width: 992px) {
+            .wc-checkout-wrap, .wc-checkout-wrap.container--xs, .before_form.container--xs { max-width: 1100px !important; padding: 30px !important; }
+            .checkout.woocommerce-checkout { display: flex; flex-wrap: wrap; gap: 30px; }
+            .checkout.woocommerce-checkout > .col2-set { flex: 1 1 58%; min-width: 0; }
+            .checkout.woocommerce-checkout > .checkout-right-column { flex: 0 0 340px; }
+        }
+
+        /* === FIX 3: PayPal badge same green as others === */
+        .hs-payment-methods .payment-fee-free {
+            background: #3dbd00 !important;
+            color: #fff !important;
+        }
+
     </style>
 </head>
 <body class="wp-singular page-template-default page page-id-7 wp-theme-hsplus wp-child-theme-hsplus-child theme-vigoshop theme-hsplus woocommerce-checkout woocommerce-page woocommerce-no-js brand-stepease brand-general" data-hswooplus="10.3.7">
@@ -420,6 +468,23 @@ $delivery_dates = se_get_delivery_dates();
                                                             <p>Paketomat / Petrol / MOL</p>
                                                             <img decoding="async" src="https://images.vigo-shop.com/slo/shipping-method-icons/parcel_machine_SL_alt.svg">
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Delivery info box (orange estimated delivery) -->
+                                            <div class="form-row form-row-wide col-xs-12" id="delivery-info-box-wrapper">
+                                                <div class="hs-delivery-info-box">
+                                                    <div class="delivery-info-left">
+                                                        <svg class="delivery-check-icon" viewBox="0 0 19 14" fill="#3DBD00" width="16" height="12"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.5725 3.40179L8.14482 13.5874C7.5815 14.1375 6.66839 14.1375 6.1056 13.5874L0.422493 8.03956C-0.140831 7.48994-0.140831 6.59748 0.422493 6.04707L1.44121 5.05126C2.00471 4.50094 2.91854 4.50094 3.48132 5.05126L7.12254 8.60835L15.5145 0.412609C16.078-0.137536 16.9909-0.137536 17.5537 0.412609L18.5733 1.40842C19.1424 1.95795 19.1424 2.8505 18.5725 3.40179Z"/></svg>
+                                                        <div class="delivery-info-dates">
+                                                            <span class="delivery-info-label">Predvidena dostava:</span>
+                                                            <strong class="delivery-info-date"><?php echo esc_html($delivery_dates); ?></strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="delivery-info-right">
+                                                        <span class="delivery-info-free tag tag--green">Brezplačno</span>
+                                                        <img class="delivery-info-logo" src="https://images.vigo-shop.com/general/curriers/posta_slo.png" alt="Pošta Slovenije" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -518,6 +583,9 @@ $delivery_dates = se_get_delivery_dates();
 
                             <!-- Hidden shipping method for WC -->
                             <input type="hidden" name="shipping_method[0]" value="free_shipping:1" />
+
+                            <!-- RIGHT COLUMN: shipping, payment, summary, place order -->
+                            <div class="checkout-right-column">
 
                             <!-- Fallback payment method (ensures COD is always submitted even if WC radios don't render) -->
                             <input type="hidden" name="payment_method" id="payment_method_fallback" value="cod" />
@@ -679,6 +747,7 @@ $delivery_dates = se_get_delivery_dates();
                                 </div>
                             </div>
 
+                            </div><!-- /.checkout-right-column -->
                         </form>
                     </div>
                 </div>
